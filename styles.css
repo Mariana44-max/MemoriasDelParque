@@ -1,0 +1,234 @@
+/* Estilos generales */
+body {
+  background-image: url('fondo.jpg'); /* o 'img/fondo.jpg' si está en subcarpeta */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  margin: 0;
+  font-family: Arial, sans-serif;
+  color: white; /* Cambia esto si necesitas más contraste */
+}
+
+
+/* Header */
+header {
+    background-color: #4b3d2a;/* café profundo */
+    color: #fff;
+    padding: 1rem;
+    text-align: center;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.boton {
+    border: none;
+    box-shadow: 0 2px 5px rgb(0, 0, 0);
+}
+
+.logo {
+    width: 60px;
+    height: auto;
+    vertical-align: middle;
+    margin-right: 10px;
+}
+
+main {
+  background-color: rgba(0, 0, 0, 0.5); /* negro translúcido */
+  padding: 20px;
+  border-radius: 10px;
+}
+
+header h1 {
+    display: inline-block;
+    vertical-align: middle;
+    font-size: 2rem;
+}
+
+nav {
+    margin-top: 1rem;
+}
+
+nav button {
+    background-color: #d6a85b; /* dorado cálido */
+    color: #3e2c1c;
+    border: none;
+    padding: 0.5rem 1rem;
+    margin: 0 5px;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+nav button:hover {
+    background-color: #c58c3b;
+}
+
+/* Secciones */
+.seccion {
+    padding: 2rem;
+    display: none;
+    animation: fadeIn 0.5s ease;
+}
+
+.seccion h2 {
+    color: #000000;
+    margin-bottom: 1rem;
+}
+
+.seccion p {
+    line-height: 1.6;
+}
+
+.seccion ul {
+    padding-left: 1.5rem;
+}
+
+.seccion ul li {
+    margin-bottom: 0.5rem;
+}
+
+/* Mostrar sección activa */
+.seccion.activa {
+    display: block;
+}
+
+.oculto {
+    display: none;
+}
+
+/* Niveles */
+.nivel {
+    border: 2px solid #b48245;
+    padding: 1rem;
+    border-radius: 20px;
+    margin-bottom: 1rem;
+    background-color: #7e753e;
+    cursor: pointer;
+}
+
+.nivel h3 {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    font-size: 1.2rem;
+}
+
+.nivel .icono {
+    width: 80px;
+    margin-right: 10px;
+    border-radius: 20px;
+}
+
+.contenido-nivel {
+    display: none;
+    margin-top: 1rem;
+}
+
+.nivel.activo .contenido-nivel {
+    display: block;
+}
+
+/* Animación */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    header h1 {
+        display: block;
+        font-size: 1.5rem;
+    }
+
+    nav button {
+        display: block;
+        margin: 0.5rem auto;
+    }
+
+    .logo {
+        display: block;
+        margin: 0 auto 10px;
+    }
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+th, td {
+    border: 1px solid #b48245;
+    padding: 0.5rem;
+    text-align: center;
+}
+
+th {
+    background-color: #d6a85b;
+    color: #3e2c1c;
+}
+
+.formulario {
+    margin-top: 2rem;
+}
+
+.formulario input {
+    margin: 0.5rem 0.5rem 0.5rem 0;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+
+.formulario button {
+    padding: 0.5rem 1rem;
+    background-color: #6b3e26;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+.mapa-container {
+  position: relative;
+  width: 100%;
+  max-width: 1000px;
+  margin: auto;
+}
+
+.mapa-base {
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.marcador {
+  position: absolute;
+  background-color: #8B0000;
+  color: white;
+  font-weight: bold;
+  border-radius: 50%;
+  text-align: center;
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
+  text-decoration: none;
+  box-shadow: 0 0 5px rgba(0,0,0,0.3);
+  transition: transform 0.2s;
+}
+
+.marcador:hover {
+  transform: scale(1.2);
+  background-color: #C62828;
+}
+
+/* Ubicaciones aproximadas de los niveles en la imagen */
+.marcador1 { top: 82%; left: 17%; }  /* Entrada - plaza principal */
+.marcador2 { top: 58%; left: 12%; }  /* Zona cafetera izquierda */
+.marcador3 { top: 62%; left: 21%; }  /* Establo cerca a cultivos */
+.marcador4 { top: 39%; left: 48%; }  /* Vía del tren al centro */
+.marcador5 { top: 30%; left: 60%; }  /* Teatro / zona de show */
+.marcador6 { top: 89%; left: 34%; }  /* Museo en la entrada derecha */
