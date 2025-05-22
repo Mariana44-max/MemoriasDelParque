@@ -1,49 +1,53 @@
 // Cambiar entre secciones
-function mostrarSeccion(id) {
-    const secciones = document.querySelectorAll('.seccion');
-    secciones.forEach(sec => sec.classList.remove('activa'));
-    document.getElementById(id).classList.add('activa');
+function showSection(id) {
+    const sections = document.querySelectorAll('.section');
+    sections.forEach(sec => sec.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
 }
 
 // Mostrar u ocultar contenido de cada nivel al hacer clic
-function toggleNivel(elemento) {
-    elemento.classList.toggle('activo');
+function toggleLevel(element) {
+    document.querySelectorAll('.level').forEach(level => {
+        if (level !== element) level.classList.remove('active');
+    });
+    element.classList.toggle('active');
 }
 
-let jugadores = [];
 
-function agregarJugador() {
-    const nombre = document.getElementById('nombreJugador').value.trim();
-    const tiempo = parseFloat(document.getElementById('tiempoJugador').value);
+let players = [];
 
-    if (nombre === '' || isNaN(tiempo)) {
+function addPlayer() {
+    const name = document.getElementById('playerName').value.trim();
+    const time = parseFloat(document.getElementById('playerTime').value);
+
+    if (name === '' || isNaN(time) || name == null || time == null)  {
         alert('Por favor ingresa un nombre y un tiempo válido.');
         return;
     }
 
-    jugadores.push({ nombre, tiempo });
-    jugadores.sort((a, b) => a.tiempo - b.tiempo); // Orden por tiempo menor
+    players.push({ name, time });
+    players.sort((a, b) => a.time - b.time); // Orden por tiempo menor
 
-    mostrarTabla();
-    limpiarFormulario();
+    showTable();
+    cleanForm();
 }
 
-function mostrarTabla() {
+function showTable() {
     const tbody = document.querySelector('#ranking tbody');
     tbody.innerHTML = '';
 
-    jugadores.forEach((jugador, index) => {
-        const fila = document.createElement('tr');
-        fila.innerHTML = `
+    players.forEach((player, index) => {
+        const line = document.createElement('tr');
+        line.innerHTML = `
             <td>${index + 1}</td>
-            <td>${jugador.nombre}</td>
-            <td>${jugador.tiempo}</td>
+            <td>${player.name}</td>
+            <td>${player.time}</td>
         `;
-        tbody.appendChild(fila);
+        tbody.appendChild(line);
     });
 }
 
-function limpiarFormulario() {
-    document.getElementById('nombreJugador').value = '';
-    document.getElementById('tiempoJugador').value = '';
+function cleanForm() {
+    document.getElementById('playerName').value = '';
+    document.getElementById('playerTime').value = '';
 }

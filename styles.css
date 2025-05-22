@@ -1,6 +1,6 @@
 /* Estilos generales */
 body {
-  background-image: url('fondo.jpg'); /* o 'img/fondo.jpg' si está en subcarpeta */
+  background-image: url('images/background.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -22,7 +22,7 @@ header {
     z-index: 10;
 }
 
-.boton {
+.button {
     border: none;
     box-shadow: 0 2px 5px rgb(0, 0, 0);
 }
@@ -67,40 +67,40 @@ nav button:hover {
 }
 
 /* Secciones */
-.seccion {
+.section {
     padding: 2rem;
     display: none;
     animation: fadeIn 0.5s ease;
 }
 
-.seccion h2 {
+.section h2 {
     color: #000000;
     margin-bottom: 1rem;
 }
 
-.seccion p {
+.section p {
     line-height: 1.6;
 }
 
-.seccion ul {
+.section ul {
     padding-left: 1.5rem;
 }
 
-.seccion ul li {
+.section ul li {
     margin-bottom: 0.5rem;
 }
 
 /* Mostrar sección activa */
-.seccion.activa {
+.section.active {
     display: block;
 }
 
-.oculto {
+.hide {
     display: none;
 }
 
 /* Niveles */
-.nivel {
+.level {
     border: 2px solid #b48245;
     padding: 1rem;
     border-radius: 20px;
@@ -109,26 +109,30 @@ nav button:hover {
     cursor: pointer;
 }
 
-.nivel h3 {
+.level h3 {
     margin: 0;
     display: flex;
     align-items: center;
     font-size: 1.2rem;
 }
 
-.nivel .icono {
+.level .icon {
     width: 80px;
     margin-right: 10px;
     border-radius: 20px;
 }
-
-.contenido-nivel {
-    display: none;
-    margin-top: 1rem;
+.level-content {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-height 0.6s ease, opacity 0.6s ease;
+    margin-top: 0; /* importante para evitar espacio extra cuando está cerrado */
 }
 
-.nivel.activo .contenido-nivel {
-    display: block;
+.level.active .level-content {
+    max-height: 500px; /* suficiente para cubrir el texto más largo */
+    opacity: 1;
+    margin-top: 1rem;
 }
 
 /* Animación */
@@ -172,18 +176,18 @@ th {
     color: #3e2c1c;
 }
 
-.formulario {
+.form {
     margin-top: 2rem;
 }
 
-.formulario input {
+.form input {
     margin: 0.5rem 0.5rem 0.5rem 0;
     padding: 0.5rem;
     border: 1px solid #ccc;
     border-radius: 6px;
 }
 
-.formulario button {
+.form button {
     padding: 0.5rem 1rem;
     background-color: #6b3e26;
     color: white;
@@ -191,21 +195,21 @@ th {
     border-radius: 8px;
     cursor: pointer;
 }
-.mapa-container {
+.map-container {
   position: relative;
   width: 100%;
   max-width: 1000px;
   margin: auto;
 }
 
-.mapa-base {
+.map-base {
   width: 100%;
   height: auto;
   border-radius: 10px;
   box-shadow: 0 4px 10px rgba(0,0,0,0.2);
 }
 
-.marcador {
+.marker {
   position: absolute;
   background-color: #8B0000;
   color: white;
@@ -220,15 +224,15 @@ th {
   transition: transform 0.2s;
 }
 
-.marcador:hover {
+.marker:hover {
   transform: scale(1.2);
   background-color: #C62828;
 }
 
 /* Ubicaciones aproximadas de los niveles en la imagen */
-.marcador1 { top: 82%; left: 17%; }  /* Entrada - plaza principal */
-.marcador2 { top: 58%; left: 12%; }  /* Zona cafetera izquierda */
-.marcador3 { top: 62%; left: 21%; }  /* Establo cerca a cultivos */
-.marcador4 { top: 39%; left: 48%; }  /* Vía del tren al centro */
-.marcador5 { top: 30%; left: 60%; }  /* Teatro / zona de show */
-.marcador6 { top: 89%; left: 34%; }  /* Museo en la entrada derecha */
+.marker1 { top: 82%; left: 17%; }  /* Entrada - plaza principal */
+.marker2 { top: 58%; left: 12%; }  /* Zona cafetera izquierda */
+.marker3 { top: 62%; left: 21%; }  /* Establo cerca a cultivos */
+.marker4 { top: 39%; left: 48%; }  /* Vía del tren al centro */
+.marker5 { top: 30%; left: 60%; }  /* Teatro / zona de show */
+.marker6 { top: 89%; left: 34%; }  /* Museo en la entrada derecha */

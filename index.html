@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,25 +8,23 @@
 </head>
 <body>
     <header>
-        <img src="logo.png" alt="Logo Memorias del Parque" class="logo">
+        <img src="images/logo.png" alt="Logo Memorias del Parque" class="logo">
         <h1>Memorias del Parque</h1>
         <nav>
-            <button onclick="mostrarSeccion('inicio')" class="boton">Inicio</button>
-            <button onclick="mostrarSeccion('quienes-somos')" class="boton">¿Quiénes somos?</button>
-            <button onclick="mostrarSeccion('info-juego')" class="boton">Información del juego</button>
-            <button onclick="mostrarSeccion('niveles')" class="boton">Niveles</button>
-            <button onclick="mostrarSeccion('tabla-jugadores')" class="boton">Tabla de Clasificaciones</button>
+            <button onclick="showSection('start')" class="button">Inicio</button>
+            <button onclick="showSection('about-us')" class="button"  >¿Quiénes somos?</button>
+            <button onclick="showSection('info-game')" class="button">Información del juego</button>
+            <button onclick="showSection('levels')" class="button">Niveles</button>
+            <button onclick="showSection('players-table')" class="button">Tabla de Clasificaciones</button>
         </nav>
     </header>
-  
 
-
-        <section id="inicio" class="seccion">
+        <section id="start" class="section">
             <h2>Bienvenido a Memorias del Parque</h2>
             <p>Un viaje cultural inspirado en el Parque del Café, donde recuperarás recuerdos perdidos mientras descubres nuestras raíces.</p>
         </section>
 
-        <section id="quienes-somos" class="seccion oculto">
+        <section id="about-us" class="section hide">
             <h2>¿Quiénes somos?</h2>
             <p>Somos un equipo de estudiantes de primer semestre de Ingeniería de Software e Industrial, apasionados por la cultura, la tecnología y la creatividad. Este proyecto nació como parte de nuestra formación académica, pero también como una forma de rendir homenaje al Parque del Café y a las tradiciones del eje cafetero.</p>
             <ul>
@@ -40,46 +38,46 @@
             <p>“Memorias del Parque” es más que un videojuego: es un recorrido por nuestras raíces, nuestras historias y lo que nos hace únicos como colombianos.</p>
         </section>
 
-        <section id="info-juego" class="seccion oculto">
+        <section id="info-game" class="section hide">
             <h2>Información del videojuego</h2>
             <p><strong>Memorias del Parque</strong> es un videojuego educativo y cultural que lleva al jugador a través de diferentes zonas del Parque del Café. La misión: ayudar a una pareja de abuelos a recuperar sus recuerdos perdidos reviviendo tradiciones, historias y lugares emblemáticos del parque.</p>
         </section>
 
-        <section id="niveles" class="seccion oculto">
+        <section id="levels" class="section hide">
             <h2>Niveles del Juego</h2>
 
-            <div class="nivel" onclick="toggleNivel(this)">
-                <h3><img src="icons/plaza.png" alt="Plaza" class="icono"> Nivel 1 – El comienzo en la plaza</h3>
-                <p class="contenido-nivel">El jugador llega al Parque del Café y encuentra un entorno triste y apagado. Al llegar a la plaza, se encuentra con una pareja de abuelos desorientados.</p>
+            <div class="level" onclick="toggleLevel(this)">
+                <h3><img src="images/icons/square.png" alt="Plaza" class="icon"> Nivel 1 – El comienzo en la plaza</h3>
+                <p class="level-content">El jugador llega al Parque del Café y encuentra un entorno triste y apagado. Al llegar a la plaza, se encuentra con una pareja de abuelos desorientados.</p>
             </div>
 
-            <div class="nivel" onclick="toggleNivel(this)">
-                <h3><img src="icons/cafe.png" alt="Cultivo" class="icono"> Nivel 2 – Zona de cultivos de café</h3>
-                <p class="contenido-nivel">El jugador se dirige a la zona de cultivos donde aprende sobre el café y encuentra un libro de recetas. Deberá arreglar los cultivos superando pruebas como regar adecuadamente, aplicar fertilizante correcto y quitar maleza. Luego entrega el libro a los abuelos, y la abuela recuerda la importancia histórica del café para Colombia y el parque.</p>
+            <div class="level" onclick="toggleLevel(this)">
+                <h3><img src="images/icons/coffe.png" alt="Cultivo" class="icon"> Nivel 2 – Zona de cultivos de café</h3>
+                <p class="level-content">El jugador se dirige a la zona de cultivos donde aprende sobre el café y encuentra un libro de recetas. Deberá arreglar los cultivos superando pruebas como regar adecuadamente, aplicar fertilizante correcto y quitar maleza. Luego entrega el libro a los abuelos, y la abuela recuerda la importancia histórica del café para Colombia y el parque.</p>
             </div>
 
-            <div class="nivel" onclick="toggleNivel(this)">
-                <h3><img src="icons/caballo.png" alt="Caballo" class="icono"> Nivel 3 – El establo y los caballos</h3>
-                <p class="contenido-nivel">En el establo, los caballos están descuidados. El jugador debe alimentarlos y reparar una carroza. Al final encuentra una herradura dorada, que entrega a los abuelos. Esto despierta en el abuelo el recuerdo del valor de los caballos, y se lo comparte al jugador.</p>
+            <div class="level" onclick="toggleLevel(this)">
+                <h3><img src="images/icons/horse.png" alt="Caballo" class="icon"> Nivel 3 – El establo y los caballos</h3>
+                <p class="level-content">En el establo, los caballos están descuidados. El jugador debe alimentarlos y reparar una carroza. Al final encuentra una herradura dorada, que entrega a los abuelos. Esto despierta en el abuelo el recuerdo del valor de los caballos, y se lo comparte al jugador.</p>
             </div>
 
-            <div class="nivel" onclick="toggleNivel(this)">
-                <h3><img src="icons/tren.png" alt="Tren" class="icono"> Nivel 4 – La estación del tren</h3>
-                <p class="contenido-nivel">Los abuelos acompañan al jugador a la estación del tren. El tren está dañado y desconectado. Los abuelos recuerdan cómo viajaban en tren entre municipios, lo que motiva al jugador a repararlo. Cuando logra hacerlo funcionar, todos suben al tren, cerrando este nivel.</p>
+            <div class="level" onclick="toggleLevel(this)">
+                <h3><img src="images/icons/train.png" alt="Tren" class="icon"> Nivel 4 – La estación del tren</h3>
+                <p class="level-content">Los abuelos acompañan al jugador a la estación del tren. El tren está dañado y desconectado. Los abuelos recuerdan cómo viajaban en tren entre municipios, lo que motiva al jugador a repararlo. Cuando logra hacerlo funcionar, todos suben al tren, cerrando este nivel.</p>
             </div>
 
-            <div class="nivel" onclick="toggleNivel(this)">
-                <h3><img src="icons/baile.png" alt="Baile" class="icono"> Nivel 5 – El teatro y el show del cafe</h3>
-                <p class="contenido-nivel">El jugador llega al teatro y nota que los bailarines del show del café no están. Debe encontrarlos y convencerlos de volver a actuar. Cuando aceptan, los abuelos recuerdan las fiestas tradicionales con carranga, bambuco, pasillo y otros ritmos folclóricos.</p>
+            <div class="level" onclick="toggleLevel(this)">
+                <h3><img src="images/icons/dance.png" alt="Baile" class="icon"> Nivel 5 – El teatro y el show del cafe</h3>
+                <p class="level-content">El jugador llega al teatro y nota que los bailarines del show del café no están. Debe encontrarlos y convencerlos de volver a actuar. Cuando aceptan, los abuelos recuerdan las fiestas tradicionales con carranga, bambuco, pasillo y otros ritmos folclóricos.</p>
             </div>
 
-            <div class="nivel" onclick="toggleNivel(this)">
-                <h3><img src="icons/museo.png" alt="Museo" class="icono"> Nivel 6 – El museo del cafe</h3>
-                <p class="contenido-nivel">Uno de los bailarines informa que el museo está cerrado porque un hombre no quiere entregar la llave. El jugador debe animarlo usando pistas: darle un capuchino con Baileys y un pase para un paseo a caballo. Si lo hace bien, obtiene la llave, abre el museo y los abuelos finalmente recuperan todos sus recuerdos. Así concluye el juego.</p>
+            <div class="level" onclick="toggleLevel(this)">
+                <h3><img src="images/icons/museum.png" alt="Museo" class="icon"> Nivel 6 – El museo del cafe</h3>
+                <p class="level-content">Uno de los bailarines informa que el museo está cerrado porque un hombre no quiere entregar la llave. El jugador debe animarlo usando pistas: darle un capuchino con Baileys y un pase para un paseo a caballo. Si lo hace bien, obtiene la llave, abre el museo y los abuelos finalmente recuperan todos sus recuerdos. Así concluye el juego.</p>
             </div>
             <p><strong>Al final del juego, se guarda el tiempo que el jugador tardó en completar la aventura para mostrar una tabla de clasificaciones.</strong></p>
         </section>
-        <section id="tabla-jugadores" class="seccion oculto">
+        <section id="players-table" class="section hide">
     <h2>Tabla de Clasificaciones</h2>
     <table id="ranking">
         <thead>
@@ -94,11 +92,11 @@
         </tbody>
     </table>
 
-    <div class="formulario">
+    <div class="form">
         <h3>Agregar jugador</h3>
-        <input type="text" id="nombreJugador" placeholder="Nombre del jugador">
-        <input type="number" id="tiempoJugador" placeholder="Tiempo (en minutos)">
-        <button onclick="agregarJugador()">Agregar</button>
+        <input type="text" id="playerName" placeholder="Nombre del jugador">
+        <input type="number" id="playerTime" placeholder="Tiempo (en minutos)">
+        <button onclick="addPlayer()">Agregar</button>
     </div>
 </section>
 
