@@ -1,0 +1,16 @@
+/* game.css */
+
+/* Hacer que el canvas esté centrado */
+body {
+    margin: 0;
+    background-color: black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+canvas {
+    image-rendering: pixelated;
+    border: 2px solid white;
+}
