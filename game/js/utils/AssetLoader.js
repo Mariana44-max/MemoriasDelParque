@@ -1,4 +1,3 @@
-// game/js/utils/AssetLoader.js
 class AssetLoader {
     constructor() {
         this.assets = {};
@@ -6,7 +5,6 @@ class AssetLoader {
         this.totalAssets = 0;
     }
 
-    // Carga una imagen y la guarda en el objeto assets
     loadImage(name, src) {
         this.totalAssets++;
         const img = new Image();
@@ -21,37 +19,31 @@ class AssetLoader {
         this.assets[name] = img;
     }
 
-    // Verifica si todos los assets se han cargado
     isReady() {
         return this.loadedAssets === this.totalAssets;
     }
 
-    // Obtiene un asset por su nombre
     getAsset(name) {
         return this.assets[name];
     }
 }
 
-// Instancia global del cargador de assets
 const assetLoader = new AssetLoader();
 
-// Carga de todos los assets del juego
+// Carga de fondos y overlay
 assetLoader.loadImage('background_intro', 'assets/backgrounds/intro.png');
 assetLoader.loadImage('background_coffeFarm', 'assets/backgrounds/coffeFarm.png');
 assetLoader.loadImage('overlay_intro', 'assets/extra-elements/intro.png');
 
-// Sprites del jugador
+// Sprites del JUGADOR
 assetLoader.loadImage('player_stand', 'assets/sprites/player/stand.png');
-assetLoader.loadImage('player_walk1', 'assets/sprites/player/walk1.png');
-assetLoader.loadImage('player_walk2', 'assets/sprites/player/walk2.png');
-assetLoader.loadImage('player_interact', 'assets/sprites/player/interact.png');
+assetLoader.loadImage('player_walk_sheet', 'assets/sprites/player/walk1.png'); // La hoja de sprites de caminar
+assetLoader.loadImage('player_interact', 'assets/sprites/player/Interact.png'); // Nota: mayúscula en Interact.png
 
-// Sprites de la abuela
+// Sprites de la ABUELA
 assetLoader.loadImage('grandma_stand', 'assets/sprites/grandma/stand.png');
-assetLoader.loadImage('grandma_walk1', 'assets/sprites/grandma/walk1.png');
-assetLoader.loadImage('grandma_walk2', 'assets/sprites/grandma/walk2.png');
+assetLoader.loadImage('grandma_walk_sheet', 'assets/sprites/grandma/walk1.png'); // La hoja de sprites de caminar
 
-// Sprites del abuelo
+// Sprites del ABUELO
 assetLoader.loadImage('grandpa_stand', 'assets/sprites/grandpa/stand.png');
-assetLoader.loadImage('grandpa_walk1', 'assets/sprites/grandpa/walk1.png');
-assetLoader.loadImage('grandpa_walk2', 'assets/sprites/grandpa/walk2.png');
+assetLoader.loadImage('grandpa_walk_sheet', 'assets/sprites/grandpa/walk1.png'); // La hoja de sprites de caminar

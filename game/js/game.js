@@ -1,4 +1,3 @@
-// game/game.js
 class Game {
     constructor() {
         this.canvas = document.getElementById('gameCanvas');

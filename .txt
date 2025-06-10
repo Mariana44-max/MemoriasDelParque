@@ -1,39 +1,9 @@
-MemoriasDelParque
-├── game/
-│   ├── assets/
-│   │   ├── backgrounds/
-│   │   │   ├── coffeFarm.png
-│   │   │   └── intro.png
-│   │   ├── extra-elements/
-│   │   │   └── intro.png
-│   │   └── sprites/
-│   │       ├── grandma/
-│   │       │   ├── stand.png
-│   │       │   ├── walk1.png
-│   │       │   └── walk2.png
-│   │       ├── grandpa/
-│   │       │   ├── stand.png
-│   │       │   ├── walk1.png
-│   │       │   └── walk2.png
-│   │       └── player/
-│   │           ├── interact.png
-│   │           ├── stand.png
-│   │           ├── walk1.png
-│   │           └── walk2.png
-│   ├── js/
-│   │   ├── entities/    [Aquí irán las clases para Player, NPCs, etc.]
-│   │   │   ├── Player.js
-│   │   │   ├── NPC.js
-│   │   │   └── OldCouple.js (o dos archivos: Grandma.js, Grandpa.js)
-│   │   ├── scenes/      [Cada nivel será una 'escena' o 'nivel']
-│   │   │   ├── IntroScene.js
-│   │   │   └── Level1Scene.js
-│   │   ├── utils/       [Funciones de utilidad, como el cargador de assets]
-│   │   │   └── AssetLoader.js
-│   │   └── game.js      [El archivo principal que orquesta el juego]
-│   ├── game.css
-│   └── game.html
-├── images/
-├── index.html
-├── script.js
-└── styles.css
+vale, ahora ya podemos empezar a desarrollar el nivel 1
+
+te explico como quiero que sea el nivel 1
+
+quiero que cuando se termine la conversación que tienen los personajes en la introducción, caminen hasta el borde derecho de la pantalla, alli se transportarán al nivel 1
+
+en el nivel 1, apareceran desde el borde izquierdo y allí empezara todo
+
+aqui ya podremos mover al personaje 
