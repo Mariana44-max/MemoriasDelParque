@@ -1,0 +1,39 @@
+MemoriasDelParque
+├── game/
+│   ├── assets/
+│   │   ├── backgrounds/
+│   │   │   ├── coffeFarm.png
+│   │   │   └── intro.png
+│   │   ├── extra-elements/
+│   │   │   └── intro.png
+│   │   └── sprites/
+│   │       ├── grandma/
+│   │       │   ├── stand.png
+│   │       │   ├── walk1.png
+│   │       │   └── walk2.png
+│   │       ├── grandpa/
+│   │       │   ├── stand.png
+│   │       │   ├── walk1.png
+│   │       │   └── walk2.png
+│   │       └── player/
+│   │           ├── interact.png
+│   │           ├── stand.png
+│   │           ├── walk1.png
+│   │           └── walk2.png
+│   ├── js/
+│   │   ├── entities/    [Aquí irán las clases para Player, NPCs, etc.]
+│   │   │   ├── Player.js
+│   │   │   ├── NPC.js
+│   │   │   └── OldCouple.js (o dos archivos: Grandma.js, Grandpa.js)
+│   │   ├── scenes/      [Cada nivel será una 'escena' o 'nivel']
+│   │   │   ├── IntroScene.js
+│   │   │   └── Level1Scene.js
+│   │   ├── utils/       [Funciones de utilidad, como el cargador de assets]
+│   │   │   └── AssetLoader.js
+│   │   └── game.js      [El archivo principal que orquesta el juego]
+│   ├── game.css
+│   └── game.html
+├── images/
+├── index.html
+├── script.js
+└── styles.css
