@@ -47,3 +47,5 @@ assetLoader.loadImage('grandma_walk_sheet', 'assets/sprites/grandma/walk1.png');
 // Sprites del ABUELO
 assetLoader.loadImage('grandpa_stand', 'assets/sprites/grandpa/stand.png');
 assetLoader.loadImage('grandpa_walk_sheet', 'assets/sprites/grandpa/walk1.png'); // La hoja de sprites de caminar
+
+assetLoader.loadImage('game_elements_sheet', 'assets/extra-elements/game_elements.png');

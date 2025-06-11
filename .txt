@@ -1,9 +1,0 @@
-vale, ahora ya podemos empezar a desarrollar el nivel 1
-
-te explico como quiero que sea el nivel 1
-
-quiero que cuando se termine la conversación que tienen los personajes en la introducción, caminen hasta el borde derecho de la pantalla, alli se transportarán al nivel 1
-
-en el nivel 1, apareceran desde el borde izquierdo y allí empezara todo
-
-aqui ya podremos mover al personaje 

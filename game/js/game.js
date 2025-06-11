@@ -6,6 +6,7 @@ class Game {
         this.currentScene = null;
         this.lastFrameTime = 0; // Para calcular deltaTime
         this.animationFrameId = null; // Para controlar requestAnimationFrame
+        this.keys = {};
     }
 
     // Inicializa el juego
@@ -28,8 +29,7 @@ class Game {
     // Configura todas las escenas del juego
     setupScenes() {
         this.scenes.intro = new IntroScene(this);
-        // Cuando creemos el nivel 1:
-        // this.scenes.level1 = new Level1Scene(this);
+        this.scenes.level1 = new Level1Scene(this);
     }
 
     // Cambia la escena actual
