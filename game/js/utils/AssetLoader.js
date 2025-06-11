@@ -49,3 +49,5 @@ assetLoader.loadImage('grandpa_stand', 'assets/sprites/grandpa/stand.png');
 assetLoader.loadImage('grandpa_walk_sheet', 'assets/sprites/grandpa/walk1.png'); // La hoja de sprites de caminar
 
 assetLoader.loadImage('game_elements_sheet', 'assets/extra-elements/game_elements.png');
+assetLoader.loadImage('horse', 'assets/extra-elements/horse.png');
+assetLoader.loadImage('barn_elements', 'assets/extra-elements/barn_elements.png');
