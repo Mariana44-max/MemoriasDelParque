@@ -1,91 +1,3 @@
-// game/js/scenes/Level1Scene.js
-
-/**
- * Clase para representar un objeto interactivo en el juego.
- */
-class InteractiveObject {
-    constructor(x, y, spriteSheet, animations, initialAnimation = 'default_animation', scale = 1.5) {
-        this.x = x;
-        this.y = y;
-        this.width = 32; // Ancho original de un frame del sprite
-        this.height = 32; // Alto original de un frame del sprite
-        this.scale = scale; // Factor de escalado para dibujar en el canvas (32*scale)
-        this.spriteSheet = spriteSheet;
-        this.animations = animations;
-
-        // Asegurarse de que la animación inicial exista
-        if (this.animations[initialAnimation]) {
-            this.currentAnimation = this.animations[initialAnimation];
-        } else {
-            console.warn(`Animación inicial "${initialAnimation}" no encontrada para InteractiveObject.`);
-            this.currentAnimation = { xOffset: 0, yOffset: 0, frameCount: 1 }; // Fallback
-        }
-        
-        this.currentFrameIndex = 0;
-        this.frameTimer = 0;
-        this.frameDelay = 200; // Velocidad de animación por defecto (si el objeto tuviera varios frames)
-    }
-
-    update(deltaTime) {
-        // Lógica de animación para objetos si tienen múltiples frames
-        if (this.currentAnimation && this.currentAnimation.frameCount > 1) {
-            this.frameTimer += deltaTime;
-            if (this.frameTimer >= this.frameDelay) {
-                this.currentFrameIndex = (this.currentFrameIndex + 1) % this.currentAnimation.frameCount;
-                this.frameTimer = 0;
-            }
-        }
-    }
-
-    draw(ctx) {
-        if (!this.currentAnimation || !this.spriteSheet) return;
-
-        const sourceX = (this.currentAnimation.xOffset + this.currentFrameIndex) * this.width;
-        const sourceY = this.currentAnimation.yOffset * this.height;
-
-        ctx.drawImage(
-            this.spriteSheet,
-            sourceX,
-            sourceY,
-            this.width,
-            this.height,
-            this.x,
-            this.y,
-            this.width * this.scale,
-            this.height * this.scale
-        );
-    }
-
-    /**
-     * Cambia la animación actual del objeto.
-     * @param {string} animName El nombre de la animación a establecer.
-     */
-    setAnimation(animName) {
-        if (this.animations[animName]) {
-            this.currentAnimation = this.animations[animName];
-            this.currentFrameIndex = 0; // Reiniciar el frame al cambiar de animación
-            this.frameTimer = 0;
-        } else {
-            console.warn(`Animación "${animName}" no encontrada para el objeto interactivo.`);
-        }
-    }
-
-    /**
-     * Comprueba si un punto (ej. el clic del mouse) está dentro del área del objeto.
-     * @param {number} mouseX Coordenada X del mouse.
-     * @param {number} mouseY Coordenada Y del mouse.
-     * @returns {boolean} Verdadero si el punto está dentro del objeto, falso en caso contrario.
-     */
-    isClicked(mouseX, mouseY) {
-        return mouseX >= this.x && mouseX <= this.x + (this.width * this.scale) &&
-               mouseY >= this.y && mouseY <= this.y + (this.height * this.scale);
-    }
-}
-
-
-/**
- * Clase para la escena del Nivel 1.
- */
 class Level1Scene {
     constructor(game) {
         this.game = game;
@@ -135,14 +47,14 @@ class Level1Scene {
         // Instancias de objetos interactivos en el nivel
         // Granos de café dispersos (usando un scale más pequeño)
         this.coffeeBeans = [
-            new InteractiveObject(150, 150, this.elementsSheet, this.elementAnimations, 'coffee_bean_red', 0.8), 
-            new InteractiveObject(220, 180, this.elementsSheet, this.elementAnimations, 'coffee_bean_red', 0.8),
-            new InteractiveObject(170, 230, this.elementsSheet, this.elementAnimations, 'coffee_bean_red', 0.8),
-            new InteractiveObject(100, 250, this.elementsSheet, this.elementAnimations, 'coffee_bean_red', 0.8),
-            new InteractiveObject(280, 200, this.elementsSheet, this.elementAnimations, 'coffee_bean_red', 0.8)
+            new InteractiveObject(393, 98, this.elementsSheet, this.elementAnimations, 'coffee_bean_red', 0.8), 
+            new InteractiveObject(418, 132, this.elementsSheet, this.elementAnimations, 'coffee_bean_red', 0.8),
+            new InteractiveObject(357, 150, this.elementsSheet, this.elementAnimations, 'coffee_bean_red', 0.8),
+            new InteractiveObject(363, 131, this.elementsSheet, this.elementAnimations, 'coffee_bean_red', 0.8),
+            new InteractiveObject(395, 192, this.elementsSheet, this.elementAnimations, 'coffee_bean_red', 0.8)
         ];
         // La sartén para tostar
-        this.roastingPan = new InteractiveObject(250, 200, this.elementsSheet, this.elementAnimations, 'pan', 1.5);
+        this.roastingPan = new InteractiveObject(30, 188, this.elementsSheet, this.elementAnimations, 'pan', 1);
         this.recipeBook = null; // El libro aparecerá al final del nivel
 
         // Variables de progreso para los minijuegos
@@ -237,18 +149,47 @@ class Level1Scene {
         // Si estamos en un estado de diálogo, solo avanzamos el diálogo
         if (this.gameState === 'initial_dialogue' || this.gameState === 'final_dialogue') {
             this.advanceDialogue();
-        } else if (this.gameState === 'level_complete') {
-            // Si el libro existe y fue clicado
+        }else if (this.gameState === 'level_complete') {
+            console.log("handleClick: Estado 'level_complete'. Buscando clic en el libro.");
             if (this.recipeBook && this.recipeBook.isClicked(mouseX, mouseY)) {
-                this.recipeBook = null; // Hacer que el libro desaparezca
-                this.gameState = 'final_dialogue'; // Cambiar a estado de diálogo final
-                this.setDialogue(this.finalDialogueMessages); // Iniciar el diálogo final
-                this.player.stopMoving(); // Asegurar que el jugador esté detenido para el diálogo
-                this.oldCouple.stopMoving(); // Asegurar que los abuelos estén detenidos
+                console.log("handleClick: ¡Libro de recetas clickeado! Transición a 'final_dialogue'.");
+                this.recipeBook = null; // "Recoger" el libro/amuleto
+                this.gameState = 'final_dialogue'; // Iniciar el diálogo final
+                this.setDialogue(this.finalDialogueMessages);
+                this.player.stopMoving();
+                this.oldCouple.stopMoving();
             } else {
-                this.setDialogue("JUGADOR: Debo hacer clic en el libro para continuar."); // Mensaje si hace clic fuera del libro
+                console.log("handleClick: Clic en 'level_complete' pero no en el libro. Sugerencia de clic.");
+                this.setDialogue("JUGADOR: Debo hacer clic en el libro de recetas para continuar.");
             }
-        } else if (this.gameState === 'quiz_time') { // Si estamos en el quiz
+        } else if (this.gameState === 'final_dialogue') {
+            console.log("Level1Scene: ESTADO 'final_dialogue'.");
+            // Si el diálogo final ha terminado, los personajes empiezan a salir
+            if (this.dialogueStep >= this.dialogue.length) {
+                console.log("Level1Scene: Diálogo final HA TERMINADO. Iniciando salida de personajes.");
+                this.player.startWalking('right');
+                this.oldCouple.startWalking('right');
+
+                // Asegúrate de que la velocidad de movimiento sea suficiente y constante
+                const movement = 2 * deltaTime / (1000 / 60); // Ajustamos a un delta de 60 FPS como referencia para una velocidad constante
+                                                              // Si deltaTime es en milisegundos, 1000/60 es el deltaTime ideal para 60fps.
+                                                              // Esto asegura que 'movement' sea un valor constante por frame si el FPS es variable.
+                
+                this.player.x += movement;
+                this.oldCouple.grandmaX += movement;
+                this.oldCouple.grandpaX += movement;
+
+                console.log(`Posición del jugador: ${this.player.x}, Condición para salir: ${this.game.canvas.width + (this.player.width * this.player.scale)}`);
+
+                // Cuando todos los personajes han salido de la pantalla
+                if (this.player.x > this.game.canvas.width + (this.player.width * this.player.scale)) {
+                    console.log("Level1Scene: TODOS LOS PERSONAJES HAN SALIDO DE PANTALLA. Intentando cambiar a Nivel 2."); 
+                    this.game.changeScene('level2'); 
+                }
+            } else {
+                console.log(`Level1Scene: Diálogo final AÚN ACTIVO. Paso ${this.dialogueStep}/${this.dialogue.length}.`);
+            }
+         } else if (this.gameState === 'quiz_time') { // Si estamos en el quiz
             this.handleQuizClick(mouseX, mouseY);
         } else if (this.gameState === 'collect_coffee') {
             this.tryCollectCoffee(mouseX, mouseY);
@@ -321,7 +262,7 @@ class Level1Scene {
      * Actualiza el estado de la escena (movimiento de personajes, progresión del juego).
      * @param {number} deltaTime El tiempo transcurrido desde el último frame en milisegundos.
      */
-    update(deltaTime) {
+update(deltaTime) {
         // No actualizar nada si estamos en la pantalla de Game Over
         if (this.gameState === 'game_over_screen') {
             return; 
@@ -366,30 +307,36 @@ class Level1Scene {
                 this.setDialogue("ABUELO: Este lugar... recuerdo algo sobre recoger café.");
             }
         } else if (this.gameState === 'final_dialogue') {
+            // Actualizamos solo para la animación, la transición ya no depende de la posición.
             this.player.update(deltaTime);
             this.oldCouple.update(deltaTime);
 
-            // Si el diálogo final ha terminado, los personajes empiezan a salir
+            // Si el diálogo final ha terminado, transición directa al Nivel 2
             if (this.dialogueStep >= this.dialogue.length) {
+                console.log("DEBUG: Diálogo final de Nivel 1 TERMINADO. CAMBIANDO A NIVEL 2 INMEDIATAMENTE.");
+                this.game.changeScene('level2'); // ¡Aquí está el cambio de escena directo!
+                // No necesitamos la lógica de movimiento de salida después de este punto
+                // porque la escena cambiará antes de que los personajes salgan de pantalla.
+                // Sin embargo, si quieres que se vea que se mueven un poco antes de la transición,
+                // puedes dejar las líneas de 'startWalking' y 'movement'.
+            } else {
+                // Si el diálogo final aún está activo, los personajes pueden empezar a moverse para salir,
+                // pero la escena no cambiará hasta que el diálogo termine.
                 this.player.startWalking('right');
                 this.oldCouple.startWalking('right');
-
-                const movement = 2 * deltaTime / 16; // Velocidad de salida
+                
+                const movement = 2 * deltaTime / (1000 / 60); // Velocidad para que parezca que se van
                 this.player.x += movement;
                 this.oldCouple.grandmaX += movement;
                 this.oldCouple.grandpaX += movement;
-
-                // Cuando todos los personajes han salido de la pantalla
-                if (this.player.x > this.game.canvas.width + this.player.width * this.player.scale) {
-                    this.game.changeScene('level2'); // Transición al siguiente nivel
-                }
             }
         }
 
         // Los personajes ya no se mueven una vez que su posicionamiento inicial ha terminado,
         // excepto durante la entrada/salida o si el jugador se mueve por interacción.
         // Aquí actualizamos su animación si no están moviéndose por el "movement" global.
-        if (this.gameState !== 'initial_entry' && this.gameState !== 'player_positioning' && this.gameState !== 'final_dialogue') {
+        // Asegúrate de que el 'final_dialogue' no detenga su update
+        if (this.gameState !== 'initial_entry' && this.gameState !== 'player_positioning') {
             this.player.update(deltaTime); 
             this.oldCouple.update(deltaTime);
         }
@@ -406,7 +353,7 @@ class Level1Scene {
             this.gameState = 'quiz_time';
             // Solo establecer la pregunta inicial si no se ha iniciado el quiz
             if (this.currentQuestionIndex === 0 && !this.showQuiz) {
-                 this.setDialogue(this.quizQuestions[this.currentQuestionIndex].question);
+                this.setDialogue(this.quizQuestions[this.currentQuestionIndex].question);
             }
             this.showQuiz = true; // Asegurarse de que el quiz se muestre
         } 

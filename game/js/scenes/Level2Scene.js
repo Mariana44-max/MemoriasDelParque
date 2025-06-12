@@ -1,155 +1,127 @@
-// game/js/scenes/Level2Scene.js
-
-/**
- * Clase para la escena del Nivel 2: El Establo.
- */
 class Level2Scene {
     constructor(game) {
         this.game = game;
-        this.background = assetLoader.getAsset('background_barn'); // Usa el asset del fondo del establo
-        this.barnElementsSheet = assetLoader.getAsset('barn_elements'); // Usa el asset de los elementos del establo
-        this.horseSheet = assetLoader.getAsset('horse'); // Usa el asset del caballo
+        this.background = assetLoader.getAsset('background_barn'); // Usamos el nuevo fondo del establo
+        this.barnElementsSheet = assetLoader.getAsset('barn_elements_sheet'); // Nueva hoja de elementos
+        this.horseHeadSheet = assetLoader.getAsset('horse_head_sheet'); // Hoja de la cabeza del caballo
 
-        this.player = new Player(-32, 200); 
-        this.oldCouple = new OldCouple(-90, 200, -130, 200); 
+        // Crea instancias de tus personajes aquí, si son necesarios
+        // Por ejemplo, el jugador y los abuelos si aparecen en este nivel
+        this.player = new Player(50, 200); // Ajusta la posición inicial
+        this.oldCouple = new OldCouple(400, 200, 440, 200); // Ajusta la posición inicial
 
+         this.barnElementAnimations = {
+            'apple': { xOffset: 0, yOffset: 0, frameCount: 1 },         // Fila 1, Columna 0
+            'golden_horseshoe': { xOffset: 1, yOffset: 0, frameCount: 1 }, // Fila 1, Columna 1
+            'oil_can': { xOffset: 2, yOffset: 0, frameCount: 1 },       // Fila 1, Columna 2
+            'carriage_clean': { xOffset: 0, yOffset: 1, frameCount: 1 }, // Fila 2, Columna 0
+            'carriage_dirty': { xOffset: 1, yOffset: 1, frameCount: 1 }   // Fila 2, Columna 1
+        };
+
+        // Animaciones para el caballo (solo parpadeo)
+        // La hoja horse.png tiene 2 frames en una sola fila (0,0 y 1,0)
+        this.horseAnimations = {
+            'idle': { xOffset: 0, yOffset: 0, frameCount: 1 },   // Frame normal
+            'blink': { xOffset: 1, yOffset: 0, frameCount: 1 }  // Frame parpadeo
+        };
+
+        // Instancias de objetos interactivos
+        this.apple = null; // Se inicializará en init o cuando sea necesario
+        this.carriage = null;
+        this.oilCan = null;
+        this.goldenHorseshoe = null; // Aparece al final
+
+        // Instancia del caballo (usaremos InteractiveObject con un manejo especial para el parpadeo)
+        // Ajusta las coordenadas (x,y) según dónde quieras que esté el caballo en el fondo barn.png
+        this.horse = new InteractiveObject(269, 83, this.horseHeadSheet, this.horseAnimations, 'idle', 2.5); 
+        this.horseBlinkTimer = 0;
+        this.horseBlinkDelay = 8000; // Parpadea cada 8 segundos
+        this.isHorseBlinking = false;
+        this.blinkDuration = 100; // Duración del parpadeo en milisegundos
+
+        // Variables para el diálogo
         this.dialogue = [];
         this.dialogueStep = 0;
         this.dialogueTimeout = null;
 
-        // --- Definición de animaciones para los elementos del establo ---
-        // Basado en barn_elements.png
-        // El caballo parece tener frames de 32x32px.
-        // Los elementos pequeños (manzana, herradura, aceite) parecen de 32x32px.
-        // Las carrozas parecen de 64x32px.
-        
-        const smallElementWidth = 32;
-        const smallElementHeight = 32;
-        const carriageWidth = 64; // Las carrozas son 2x1 en la grid de 32, así que 64px de ancho
-        const carriageHeight = 32;
+        // Estado del juego para este nivel
+        this.gameState = 'initial_dialogue'; // Puedes empezar con un diálogo inicial
 
-        this.barnElementAnimations = {
-            'apple': { xOffset: 0, yOffset: 0, frameCount: 1 }, // Manzana (0,0)
-            'horseshoe': { xOffset: 1, yOffset: 0, frameCount: 1 }, // Herradura (1,0)
-            'oil_can': { xOffset: 2, yOffset: 0, frameCount: 1 }, // Lata de aceite (2,0)
-            'dirty_carriage': { xOffset: 0, yOffset: 1, frameCount: 1 }, // Carroza sucia (0,1)
-            'clean_carriage': { xOffset: 4, yOffset: 1, frameCount: 1 }, // Carroza limpia (4,1)
-        };
+        // Aquí crearás las instancias de InteractiveObject para los elementos del establo
+        // Ejemplo:
+        // this.feedBucket = new InteractiveObject(100, 150, this.barnElementsSheet, this.barnElementAnimations, 'feed_bucket', 2);
+        // this.horse = new InteractiveObject(300, 100, this.horseHeadSheet, { 'idle': { xOffset: 0, yOffset: 0, frameCount: 2 } }, 'idle', 3);
+        // NOTA: Para el caballo que parpadea, la clase InteractiveObject podría necesitar un frameDelay o un tipo de animación específico.
+        // Si el caballo es solo una imagen estática o solo parpadea, podría ser manejado de forma diferente o con una subclase.
+    }
 
-        // Animaciones del caballo (horse.png)
-        const horseSpriteWidth = 32; 
-        const horseSpriteHeight = 32; 
-        this.horseAnimations = {
-            'blink': { xOffset: 0, yOffset: 0, frameCount: 2 } // Frame 0: normal, Frame 1: parpadeo
-        };
+    init() {
+        console.log("Inicializando Level2Scene");
+        this.player.x = 50; 
+        this.player.y = 200;
+        this.player.stopMoving(); 
 
-        // --- Instancias de objetos interactivos ---
-        // Posicionar el caballo (ajusta x, y, scale según tu background)
-        this.horse = new InteractiveObject(
-            400, 100, // Coordenadas de ejemplo
-            this.horseSheet, 
-            this.horseAnimations, 
-            'blink', 
-            3 // Escala del caballo para que sea más visible
-        );
-        this.horse.width = horseSpriteWidth;
-        this.horse.height = horseSpriteHeight;
-        this.horse.frameDelay = 500; // Velocidad de parpadeo
+        this.oldCouple.grandmaX = 400; 
+        this.oldCouple.grandmaY = 200;
+        this.oldCouple.grandpaX = 440; 
+        this.oldCouple.grandpaY = 200;
+        this.oldCouple.stopMoving();
 
-        // Carroza (inicialmente sucia)
-        this.carriage = new InteractiveObject(
-            150, 250, // Posición de la carroza
-            this.barnElementsSheet, 
-            this.barnElementAnimations, 
-            'dirty_carriage', 
-            2 // Escala de la carroza
-        );
-        this.carriage.width = carriageWidth; // Ancho real del sprite en la hoja
-        this.carriage.height = carriageHeight; // Alto real del sprite en la hoja
+        this.gameState = 'initial_dialogue';
+        this.setDialogue([
+            "ABUELO: ¡Llegamos al establo! Aquí pasaba mucho tiempo con los animales.",
+            "ABUELA: Sí, aquí es donde aprendimos a cuidar a los caballos.",
+            "JUGADOR: Parece que hay cosas que hacer aquí para recordar más..."
+        ]);
 
-        // Manzana (aparece en un punto específico)
-        this.apple = new InteractiveObject(
-            50, 280, // Posición de la manzana (ajusta para que se vea bien)
-            this.barnElementsSheet, 
-            this.barnElementAnimations, 
-            'apple', 
-            1.5
-        );
-        this.apple.width = smallElementWidth;
-        this.apple.height = smallElementHeight;
+        // Estados específicos de las tareas del Nivel 2
+        this.appleFedToHorse = false;
+        this.carriageClean = false;
+        this.oilApplied = false;
 
-        // Lata de aceite (aparece en un punto específico)
-        this.oilCan = new InteractiveObject(
-            100, 280, // Posición de la lata de aceite (ajusta para que se vea bien)
-            this.barnElementsSheet, 
-            this.barnElementAnimations, 
-            'oil_can', 
-            1.5
-        );
-        this.oilCan.width = smallElementWidth;
-        this.oilCan.height = smallElementHeight;
+        // Inicializar objetos interactivos para el nivel 2
+        // Ajusta las coordenadas (x,y) de estos objetos según tu background del establo.
+        this.apple = new InteractiveObject(100, 230, this.barnElementsSheet, this.barnElementAnimations, 'apple', 1.5);
+        this.carriage = new InteractiveObject(this.game.canvas.width / 3, 160, this.barnElementsSheet, this.barnElementAnimations, 'carriage_dirty', 3.7); // La carroza empieza sucia
+        this.oilCan = new InteractiveObject(300, 220, this.barnElementsSheet, this.barnElementAnimations, 'oil_can', 1.5);
+        this.goldenHorseshoe = null; // Se inicializa al final
 
-        this.horseshoe = null; // La herradura aparece al final del nivel
+        // Reiniciar el estado del caballo para el parpadeo
+        this.horse.setAnimation('idle');
+        this.horseBlinkTimer = 0;
+        this.isHorseBlinking = false;
 
-        // --- Variables de estado del minijuego ---
-        this.horseFed = false;
-        this.carriageRepaired = false;
-        this.activeItem = null; // 'apple' o 'oil_can' - para indicar qué objeto está seleccionado para usar
-
-        // --- Sistema de preguntas ---
+        // Quiz para el Nivel 2
         this.quizQuestions = [
             {
-                question: "ABUELA: ¿Qué alimento es bueno para un caballo, que también es dulce y crujiente?",
-                options: ["Manzanas", "Pescado"],
+                question: "ABUELA: ¿Como se llama el elemento con el que guiamos al caballo?",
+                options: ["A) Rienda", "B) Montura"],
                 correctAnswerIndex: 0 
             },
             {
-                question: "ABUELO: ¿Por qué es importante lubricar las ruedas de una carroza?",
-                options: ["Para que chirríen más fuerte", "Para reducir la fricción y el desgaste"],
+                question: "ABUELO: ¿Que comida no le puedo dar a un caballo?",
+                options: ["A) Para que brille", "B) Carne"],
+                correctAnswerIndex: 1 
+            },
+            {
+                question: "ABUELA: ¿Qué se le echa a las ruedas de una carroza para que giren suavemente?",
+                options: ["A) Grasa", "B) Aceite"],
                 correctAnswerIndex: 1 
             }
         ];
         this.currentQuestionIndex = 0;
         this.showQuiz = false;
+        this.quizAttempted = false; // Para saber si ya se intentó el quiz
 
-        // --- Estados del nivel ---
-        this.gameState = 'initial_entry'; 
+        this.amuletPiece2 = null; // La herradura dorada
 
-        this.gameOverMessage = "ABUELOS: Los animales y la carroza aún necesitan más cuidado. ¡Inténtalo de nuevo!";
-        this.gameOverPrompt = "Haz clic para reiniciar el nivel.";
-
-        this.finalDialogueMessages = [
-            "ABUELO: ¡Increíble! La herradura... ¡Ahora recuerdo! ¡Es el amuleto de la buena suerte de nuestra familia!",
-            "ABUELA: ¡Y yo recuerdo las carreras en esta carroza reparada, con el dulce aroma de las manzanas que siempre llevábamos! ¡Tus acciones nos han devuelto la alegría y la memoria!"
-        ];
-    }
-
-    init() {
-        // Reiniciar posiciones de entrada para el Nivel 2
-        this.player.x = -32; 
-        this.player.y = 200;
-        this.player.startWalking('right'); 
-
-        this.oldCouple.grandmaX = -90; 
-        this.oldCouple.grandmaY = 200;
-        this.oldCouple.grandpaX = -130; 
-        this.oldCouple.grandpaY = 200;
-        this.oldCouple.startWalking('right'); 
-
-        this.gameState = 'initial_entry';
-        this.horseFed = false;
-        this.carriageRepaired = false;
-        this.activeItem = null;
-        this.horseshoe = null; 
-        this.carriage.setAnimation('dirty_carriage'); // Asegurarse de que la carroza esté sucia al inicio
-
-        this.currentQuestionIndex = 0;
-        this.showQuiz = false;
-
+        // Añadir el listener para el clic
         this.game.canvas.addEventListener('click', this.handleClick.bind(this));
     }
 
     destroy() {
+        // Limpiar recursos al salir de la escena (ej: quitar event listeners)
+        console.log("Destruyendo Level2Scene");
         clearTimeout(this.dialogueTimeout);
         this.game.canvas.removeEventListener('click', this.handleClick.bind(this));
     }
@@ -159,81 +131,71 @@ class Level2Scene {
         const mouseY = event.offsetY;
 
         if (this.gameState === 'game_over_screen') {
-            this.game.changeScene('level2'); // Reiniciar Level2Scene
+            this.game.changeScene('level2'); // Reiniciar Level2Scene si hay game over
             return;
         }
 
-        if (this.gameState === 'initial_dialogue' || 
-            this.gameState === 'task_dialogue_1' || 
-            this.gameState === 'task_dialogue_2' || 
-            this.gameState === 'final_dialogue') {
+        // Avance de diálogo general (siempre que no esté en quiz o game over)
+        if (this.dialogueStep < this.dialogue.length && this.gameState !== 'quiz_time') {
             this.advanceDialogue();
-        } else if (this.gameState === 'feed_horse') {
-            this.handleFeedHorseClick(mouseX, mouseY);
-        } else if (this.gameState === 'repair_carriage') {
-            this.handleRepairCarriageClick(mouseX, mouseY);
+            return; // Importante para que no se procesen clics de objetos mientras el diálogo avanza
+        }
+
+        // Lógica de interacción según el estado del juego
+        if (this.gameState === 'task_feed_horse_apple') {
+            if (this.apple && this.apple.isClicked(mouseX, mouseY)) {
+                this.apple.x = -100; // Mueve la manzana fuera de la vista
+                this.setDialogue("JUGADOR: ¡Aquí tienes, amiguito! Parece que le gusta.");
+                this.appleFedToHorse = true;
+                // Opcional: una animación corta del caballo comiendo o parpadeando extra.
+            } else {
+                this.setDialogue("JUGADOR: Debo darle la manzana al caballo. Haz clic en la manzana.");
+            }
+        } else if (this.gameState === 'task_clean_carriage') {
+            if (this.carriage && this.carriage.isClicked(mouseX, mouseY) && !this.carriageClean) {
+                this.carriage.setAnimation('carriage_clean'); // Cambia al sprite de carroza limpia
+                this.carriageClean = true;
+                this.setDialogue("JUGADOR: ¡La carroza está limpia! Brillando como nueva.");
+            } else if (this.carriageClean) {
+                this.setDialogue("JUGADOR: La carroza ya está limpia.");
+            } else {
+                this.setDialogue("JUGADOR: Debo hacer clic en la carroza sucia para limpiarla.");
+            }
+        } else if (this.gameState === 'task_oil_wheels') {
+            if (this.oilCan && this.oilCan.isClicked(mouseX, mouseY) && !this.oilApplied) {
+                this.oilCan.x = -100; // Mueve el tarro de aceite fuera de la vista
+                this.oilApplied = true;
+                this.setDialogue("JUGADOR: ¡Ruedas lubricadas! Ahora la carroza deslizará suave.");
+                // Opcional: una pequeña animación o sonido de lubricación.
+            } else if (this.oilApplied) {
+                this.setDialogue("JUGADOR: El aceite ya fue aplicado.");
+            } else {
+                this.setDialogue("JUGADOR: Debo usar el tarro de aceite para las ruedas.");
+            }
         } else if (this.gameState === 'quiz_time') {
-            this.handleQuizClick(mouseX, mouseY);
+            this.handleQuizClick(mouseX, mouseY); // Llama al método del quiz
         } else if (this.gameState === 'level_complete') {
-            if (this.horseshoe && this.horseshoe.isClicked(mouseX, mouseY)) {
-                this.horseshoe = null; 
-                this.gameState = 'final_dialogue';
-                this.setDialogue(this.finalDialogueMessages);
+            if (this.goldenHorseshoe && this.goldenHorseshoe.isClicked(mouseX, mouseY)) {
+                this.goldenHorseshoe = null; // "Recoger" la herradura
+                this.gameState = 'final_dialogue'; // Iniciar el diálogo final
+                this.setDialogue([
+                    "ABUELA: ¡Esta herradura dorada era un símbolo de buena suerte en nuestra familia!",
+                    "ABUELO: ¡Gracias a ti, hemos recuperado otro valioso recuerdo de este lugar!"
+                ]);
                 this.player.stopMoving();
                 this.oldCouple.stopMoving();
             } else {
-                this.setDialogue("JUGADOR: Debo hacer clic en la herradura para continuar.");
+                this.setDialogue("JUGADOR: Debo hacer clic en la herradura dorada para continuar.");
             }
         }
-    }
 
-    handleFeedHorseClick(mouseX, mouseY) {
-        // Si la manzana fue clickeada para seleccionar
-        if (this.apple.isClicked(mouseX, mouseY) && this.activeItem !== 'apple') {
-            this.activeItem = 'apple';
-            this.setDialogue("JUGADOR: He seleccionado la manzana. Ahora, ¿dónde la usaré?");
+        // Lógica para avanzar el diálogo
+        if (this.dialogueStep < this.dialogue.length && this.gameState !== 'quiz_time') {
+            this.advanceDialogue();
         } 
-        // Si la manzana está seleccionada y se hace clic en el caballo
-        else if (this.activeItem === 'apple' && this.horse.isClicked(mouseX, mouseY)) {
-            if (!this.horseFed) {
-                this.horseFed = true;
-                this.activeItem = null; // Desactivar la manzana (se "usa")
-                this.setDialogue("JUGADOR: ¡El caballo parece contento! Ha comido la manzana.");
-            } else {
-                this.setDialogue("JUGADOR: El caballo ya ha comido.");
-            }
-        } 
-        else if (this.activeItem === 'apple' && !this.horse.isClicked(mouseX, mouseY)) {
-            this.setDialogue("JUGADOR: Click en el caballo para darle la manzana.");
-        }
-        else if (!this.activeItem) { // Si no hay ítem activo y hace clic en nada relevante
-             this.setDialogue("JUGADOR: Debo seleccionar la manzana para alimentar al caballo.");
-        }
-    }
-
-    handleRepairCarriageClick(mouseX, mouseY) {
-        // Si la lata de aceite fue clickeada para seleccionar
-        if (this.oilCan.isClicked(mouseX, mouseY) && this.activeItem !== 'oil_can') {
-            this.activeItem = 'oil_can';
-            this.setDialogue("JUGADOR: He seleccionado el aceite. ¿Para qué servirá?");
-        } 
-        // Si el aceite está seleccionado y se hace clic en la carroza
-        else if (this.activeItem === 'oil_can' && this.carriage.isClicked(mouseX, mouseY)) {
-            if (!this.carriageRepaired) {
-                this.carriageRepaired = true;
-                this.activeItem = null; // Desactivar el aceite (se "usa")
-                this.carriage.setAnimation('clean_carriage'); // Cambiar sprite a carroza limpia
-                this.setDialogue("JUGADOR: La carroza está reluciente y sus ruedas no chirrían. ¡Lista para usar!");
-            } else {
-                this.setDialogue("JUGADOR: La carroza ya está reparada.");
-            }
-        }
-        else if (this.activeItem === 'oil_can' && !this.carriage.isClicked(mouseX, mouseY)) {
-            this.setDialogue("JUGADOR: Click en la carroza sucia para usar el aceite.");
-        }
-        else if (!this.activeItem) { // Si no hay ítem activo y hace clic en nada relevante
-            this.setDialogue("JUGADOR: Debo seleccionar el aceite para reparar la carroza.");
-        }
+        // else if (this.gameState === 'collect_items_barn') {
+        //     // Lógica de interacción para los elementos del establo
+        // }
     }
 
     handleQuizClick(mouseX, mouseY) {
@@ -259,172 +221,36 @@ class Level2Scene {
         }
 
         if (selectedOptionIndex !== -1) {
-            this.showQuiz = false; 
+            this.showQuiz = false; // Oculta el quiz inmediatamente después de la selección
 
             if (selectedOptionIndex === currentQ.correctAnswerIndex) {
-                this.currentQuestionIndex++; 
+                this.currentQuestionIndex++; // Avanza a la siguiente pregunta
                 if (this.currentQuestionIndex < this.quizQuestions.length) {
-                    this.setDialogue(this.quizQuestions[this.currentQuestionIndex].question); 
+                    this.setDialogue(this.quizQuestions[this.currentQuestionIndex].question); // Muestra la siguiente pregunta
                 } else {
+                    // Todas las preguntas respondidas correctamente
                     this.gameState = 'level_complete';
-                    this.setDialogue("ABUELOS: ¡Felicidades! ¡Has desbloqueado otro fragmento de nuestros recuerdos!");
-                    // Posicionar la herradura en el centro
+                    this.setDialogue("ABUELOS: ¡Lo lograste! ¡Otro recuerdo desbloqueado! ¡Busca la herradura dorada!");
+                    
+                    // Posicionar la herradura dorada (amuletPiece2) en el centro
                     const horseshoeScale = 2; // Para que sea visible
-                    const horseshoeWidth = this.barnElementAnimations.horseshoe.width || 32 * horseshoeScale; 
-                    const horseshoeHeight = this.barnElementAnimations.horseshoe.height || 32 * horseshoeScale;
-                    this.horseshoe = new InteractiveObject(
-                        (this.game.canvas.width / 2) - (horseshoeWidth / 2),
+                    const horseshoeWidth = 32 * horseshoeScale; 
+                    const horseshoeHeight = 32 * horseshoeScale;
+                    this.goldenHorseshoe = new InteractiveObject(
+                        (this.game.canvas.width / 2) - (horseshoelWidth / 2),
                         (this.game.canvas.height / 2) - (horseshoeHeight / 2),
-                        this.barnElementsSheet, 
+                        this.barnElementsSheet, // Usamos la sheet de elementos del establo
                         this.barnElementAnimations, 
-                        'horseshoe', 
+                        'golden_horseshoe', // Usamos la animación de la herradura dorada
                         horseshoeScale
                     );
-                    this.horseshoe.width = smallElementWidth; // Asegurar el tamaño correcto del sprite
-                    this.horseshoe.height = smallElementHeight;
                 }
             } else {
+                // Respuesta incorrecta
                 this.gameState = 'game_over_screen';
+                this.setDialogue("ABUELOS: No has recordado bien. ¡Inténtalo de nuevo!");
             }
         }
-    }
-
-    update(deltaTime) {
-        if (this.gameState === 'game_over_screen') {
-            return; 
-        }
-
-        // Lógica de entrada inicial
-        if (this.gameState === 'initial_entry') {
-            this.player.update(deltaTime);
-            this.oldCouple.update(deltaTime);
-
-            const movement = 2 * deltaTime / 16; 
-            this.player.x += movement;
-            this.oldCouple.grandmaX += movement;
-            this.oldCouple.grandpaX += movement;
-
-            if (this.player.x >= 100) { 
-                this.player.stopMoving();
-                const stopXGrandma = this.game.canvas.width - 50; 
-                const stopXGrandpa = stopXGrandma - 40; 
-                this.oldCouple.stopMoving();
-                this.oldCouple.grandmaX = stopXGrandma; 
-                this.oldCouple.grandpaX = stopXGrandpa; 
-
-                this.gameState = 'initial_dialogue';
-                this.setDialogue("ABUELO: ¡Bienvenido al establo! Aquí tenemos otra tarea importante para ti.");
-            }
-        } else if (this.gameState === 'final_dialogue') {
-            this.player.update(deltaTime);
-            this.oldCouple.update(deltaTime);
-
-            // Si el diálogo final ha terminado, los personajes empiezan a salir
-            if (this.dialogueStep >= this.dialogue.length) {
-                this.player.startWalking('right');
-                this.oldCouple.startWalking('right');
-
-                const movement = 2 * deltaTime / 16; 
-                this.player.x += movement;
-                this.oldCouple.grandmaX += movement;
-                this.oldCouple.grandpaX += movement;
-
-                // Cuando todos los personajes han salido de la pantalla
-                if (this.player.x > this.game.canvas.width + this.player.width * this.player.scale) {
-                    // Aquí iría la transición al Nivel 3, si lo tuvieras
-                    // Por ahora, podrías volver a Intro o al Nivel 1 para probar
-                    this.game.changeScene('intro'); // Ejemplo: volver a Intro
-                }
-            }
-        }
-
-        // Actualizar animaciones de personajes y objetos
-        this.player.update(deltaTime); 
-        this.oldCouple.update(deltaTime);
-        this.horse.update(deltaTime); 
-        this.carriage.update(deltaTime);
-        this.apple.update(deltaTime);
-        this.oilCan.update(deltaTime);
-        if (this.horseshoe) {
-            this.horseshoe.update(deltaTime);
-        }
-
-        // Lógica de progresión del nivel
-        if (this.gameState === 'initial_dialogue' && this.dialogueStep >= this.dialogue.length) {
-            this.gameState = 'task_dialogue_1';
-            this.setDialogue("ABUELA: Primero, el caballo parece tener hambre. ¿Puedes alimentarlo? Busca en los alrededores.");
-        } else if (this.gameState === 'task_dialogue_1' && this.dialogueStep >= this.dialogue.length) {
-            this.gameState = 'feed_horse';
-            this.setDialogue("JUGADOR: Debo encontrar algo para alimentar al caballo. ¡Allí hay una manzana!");
-        } else if (this.gameState === 'feed_horse' && this.horseFed && this.dialogueStep >= this.dialogue.length) {
-            this.gameState = 'task_dialogue_2';
-            this.setDialogue("ABUELO: Buen trabajo. Ahora, nuestra vieja carroza necesita un poco de mantenimiento. ¿Puedes repararla?");
-        } else if (this.gameState === 'task_dialogue_2' && this.dialogueStep >= this.dialogue.length) {
-            this.gameState = 'repair_carriage';
-            this.setDialogue("JUGADOR: La carroza parece un poco descuidada. ¡Una lata de aceite podría ayudar!");
-        } else if (this.gameState === 'repair_carriage' && this.carriageRepaired && this.dialogueStep >= this.dialogue.length) {
-            this.gameState = 'quiz_time';
-            if (this.currentQuestionIndex === 0 && !this.showQuiz) {
-                this.setDialogue(this.quizQuestions[this.currentQuestionIndex].question);
-            }
-            this.showQuiz = true;
-        } 
-        // Transición de 'quiz_time' a 'level_complete' o 'game_over_screen' se maneja en handleQuizClick.
-    }
-
-    draw(ctx) {
-        ctx.drawImage(this.background, 0, 0, this.game.canvas.width, this.game.canvas.height);
-
-        // Dibujar elementos solo cuando sean relevantes o ya estén interactuados
-        if (this.gameState === 'feed_horse' || this.horseFed || this.gameState === 'task_dialogue_2' || this.gameState === 'repair_carriage' || this.gameState === 'quiz_time' || this.gameState === 'level_complete' || this.gameState === 'final_dialogue') {
-            this.apple.draw(ctx); 
-        }
-        if (this.gameState === 'repair_carriage' || this.carriageRepaired || this.gameState === 'quiz_time' || this.gameState === 'level_complete' || this.gameState === 'final_dialogue') {
-            this.oilCan.draw(ctx); 
-        }
-        
-        this.carriage.draw(ctx);
-        this.horse.draw(ctx);
-
-        if (this.horseshoe) { // La herradura solo se dibuja si el nivel está completo
-            this.horseshoe.draw(ctx);
-        }
-        
-        this.oldCouple.draw(ctx); 
-        this.player.draw(ctx); 
-
-        // Mostrar el diálogo (si hay uno activo y no es quiz_time o game_over)
-        if (this.dialogueStep < this.dialogue.length && this.gameState !== 'quiz_time' && this.gameState !== 'game_over_screen') {
-            this.showDialogue(ctx, this.dialogue[this.dialogueStep]);
-        }
-        
-        // Mostrar el quiz si es el momento
-        if (this.showQuiz && this.gameState === 'quiz_time') {
-            this.drawQuiz(ctx);
-        }
-
-        // Mostrar la pantalla de Game Over si el estado lo indica
-        if (this.gameState === 'game_over_screen') {
-            this.drawGameOverScreen(ctx);
-        }
-    }
-
-    // --- Métodos de Diálogo y Utilidades (Copia estas de Level1Scene.js) ---
-    showDialogue(ctx, text) {
-        const boxX = 10;
-        const boxY = this.game.canvas.height - 70;
-        const boxWidth = this.game.canvas.width - 20;
-        const boxHeight = 60;
-        const padding = 10;
-        const lineHeight = 18; 
-
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.7)'; 
-        ctx.fillRect(boxX, boxY, boxWidth, boxHeight); 
-
-        ctx.fillStyle = 'white';
-        ctx.font = '14px Arial'; 
-
-        this.wrapText(ctx, text, boxX + padding, boxY + padding + lineHeight, boxWidth - (padding * 2), lineHeight);
     }
 
     drawQuiz(ctx) {
@@ -458,6 +284,100 @@ class Level2Scene {
         ctx.fillText(`2. ${currentQ.options[1]}`, 30, this.game.canvas.height - 20);
     }
 
+    update(deltaTime) {
+        // Actualizar personajes
+        this.player.update(deltaTime);
+        this.oldCouple.update(deltaTime);
+
+       // Lógica de progresión del nivel
+        if (this.gameState === 'initial_dialogue' && this.dialogueStep >= this.dialogue.length) {
+            this.gameState = 'task_feed_horse_apple';
+            this.setDialogue("ABUELO: Este caballo solía ser mi favorito. ¿Podrías darle esta manzana para que se sienta mejor?");
+            // Si quieres que la manzana aparezca solo ahora
+            // this.apple = new InteractiveObject(100, 200, this.barnElementsSheet, this.barnElementAnimations, 'apple', 1.5);
+        } 
+        
+        // Lógica de parpadeo del caballo
+        if (this.horse) {
+            this.horseBlinkTimer += deltaTime;
+            if (!this.isHorseBlinking && this.horseBlinkTimer >= this.horseBlinkDelay) {
+                this.horse.setAnimation('blink');
+                this.isHorseBlinking = true;
+                this.horseBlinkTimer = 0; // Reinicia el timer para la duración del parpadeo
+            } else if (this.isHorseBlinking && this.horseBlinkTimer >= this.blinkDuration) {
+                this.horse.setAnimation('idle');
+                this.isHorseBlinking = false;
+                this.horseBlinkTimer = 0; // Reinicia el timer para el próximo parpadeo
+            }
+        }
+
+        // Transiciones entre tareas
+        if (this.gameState === 'task_feed_horse_apple' && this.appleFedToHorse && this.dialogueStep >= this.dialogue.length) {
+            this.gameState = 'task_clean_carriage';
+            this.setDialogue("ABUELA: ¡Qué bien se ve el caballo! Ahora recuerdo... Solíamos pasear en la carroza, pero está muy sucia. ¿Podrías limpiarla?");
+        } else if (this.gameState === 'task_clean_carriage' && this.carriageClean && this.dialogueStep >= this.dialogue.length) {
+            this.gameState = 'task_oil_wheels';
+            this.setDialogue("ABUELO: ¡Perfecto! La carroza ya se ve mucho mejor. Pero para que ruede bien, necesita aceite en las ruedas. ¡Usa el tarro de aceite!");
+        } else if (this.gameState === 'task_oil_wheels' && this.oilApplied && this.dialogueStep >= this.dialogue.length) {
+            this.gameState = 'quiz_time';
+            if (this.currentQuestionIndex === 0 && !this.showQuiz && !this.quizAttempted) { // Solo muestra el primer quiz si no ha sido intentado
+                this.setDialogue(this.quizQuestions[this.currentQuestionIndex].question);
+                this.showQuiz = true;
+                this.quizAttempted = true; // Marca que el quiz ha comenzado
+            }
+            // La transición de 'quiz_time' a 'level_complete' se manejará en `handleQuizClick`.
+        } else if (this.gameState === 'level_complete' && this.dialogueStep >= this.dialogue.length) {
+            // Lógica para que los personajes salgan y la transición al siguiente nivel
+            this.player.startWalking('right');
+            this.oldCouple.startWalking('right');
+
+            const movement = 2 * deltaTime / 16; 
+            this.player.x += movement;
+            this.oldCouple.grandmaX += movement;
+            this.oldCouple.grandpaX += movement;
+
+            if (this.player.x > this.game.canvas.width + this.player.width * this.player.scale) {
+                //this.game.changeScene('level3'); // ¡Cambia a Level 3 cuando lo tengas!
+                this.game.changeScene('intro'); // Por ahora, vuelve a la intro o a Level1 si quieres repetir
+            }
+        }
+    }
+
+    draw(ctx) {
+        ctx.drawImage(this.background, 0, 0, this.game.canvas.width, this.game.canvas.height);
+
+        // Dibujar elementos interactivos del establo (solo si existen)
+        if (this.apple) this.apple.draw(ctx);
+        if (this.carriage) this.carriage.draw(ctx);
+        if (this.oilCan) this.oilCan.draw(ctx);
+        if (this.goldenHorseshoe) this.goldenHorseshoe.draw(ctx); // La herradura dorada al final
+
+        // Dibujar el caballo
+        if (this.horse) this.horse.draw(ctx);
+        
+        // Dibujar personajes
+        this.player.draw(ctx);
+        this.oldCouple.draw(ctx);
+
+        // Mostrar el diálogo (si hay uno activo y no es quiz_time o game_over)
+        if (this.dialogueStep < this.dialogue.length && this.gameState !== 'quiz_time' && this.gameState !== 'game_over_screen') {
+            this.showDialogue(ctx, this.dialogue[this.dialogueStep]);
+        }
+        
+        // Mostrar el quiz si es el momento
+        if (this.showQuiz && this.gameState === 'quiz_time') {
+            this.drawQuiz(ctx);
+        }
+
+        // Mostrar la pantalla de Game Over si el estado lo indica (copia de Level1Scene)
+        if (this.gameState === 'game_over_screen') {
+            // Asegúrate de tener la función drawGameOverScreen en Level2Scene también.
+            // Si no la tienes, cópiala de Level1Scene.js
+            this.drawGameOverScreen(ctx); 
+        }
+    }
+
+    // Asegúrate de copiar drawGameOverScreen de Level1Scene si no lo tienes.
     drawGameOverScreen(ctx) {
         ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
         ctx.fillRect(0, 0, this.game.canvas.width, this.game.canvas.height);
@@ -468,7 +388,7 @@ class Level2Scene {
         ctx.fillText("¡Oh no!", this.game.canvas.width / 2, this.game.canvas.height / 2 - 50);
 
         ctx.font = '18px Arial';
-        this.wrapText(ctx, this.gameOverMessage, 
+        this.wrapText(ctx, "ABUELOS: No has recordado bien. ¡Inténtalo de nuevo!", 
                       this.game.canvas.width / 2 - ((this.game.canvas.width - 100) / 2), 
                       this.game.canvas.height / 2 - 10, 
                       this.game.canvas.width - 100, 
@@ -476,8 +396,26 @@ class Level2Scene {
                       'center'); 
 
         ctx.font = '16px Arial';
-        ctx.fillText(this.gameOverPrompt, this.game.canvas.width / 2, this.game.canvas.height / 2 + 60);
+        ctx.fillText("Haz clic para reiniciar el nivel.", this.game.canvas.width / 2, this.game.canvas.height / 2 + 60);
         ctx.textAlign = 'left'; 
+    }
+
+    // --- Métodos de Diálogo y Utilidades (copiados de Level1Scene) ---
+    showDialogue(ctx, text) {
+        const boxX = 10;
+        const boxY = this.game.canvas.height - 70;
+        const boxWidth = this.game.canvas.width - 20;
+        const boxHeight = 60;
+        const padding = 10;
+        const lineHeight = 18; 
+
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.7)'; 
+        ctx.fillRect(boxX, boxY, boxWidth, boxHeight); 
+
+        ctx.fillStyle = 'white';
+        ctx.font = '14px Arial'; 
+
+        this.wrapText(ctx, text, boxX + padding, boxY + padding + lineHeight, boxWidth - (padding * 2), lineHeight);
     }
 
     setDialogue(text) {
@@ -493,13 +431,7 @@ class Level2Scene {
                 this.resetDialogueTimeout(); 
             } else {
                 clearTimeout(this.dialogueTimeout); 
-                if (this.gameState === 'quiz_time' && this.currentQuestionIndex < this.quizQuestions.length) {
-                    this.showQuiz = true;
-                }
-                if (this.gameState === 'final_dialogue' && this.dialogueStep >= this.dialogue.length) {
-                    this.player.startWalking('right');
-                    this.oldCouple.startWalking('right');
-                }
+                // Aquí podrías añadir lógica si el diálogo finaliza y el estado debe cambiar
             }
         }
     }
@@ -508,7 +440,7 @@ class Level2Scene {
         clearTimeout(this.dialogueTimeout);
         this.dialogueTimeout = setTimeout(() => {
             this.advanceDialogue();
-        }, 5000); 
+        }, 5000); // Diálogo avanza automáticamente después de 5 segundos
     }
     
     wrapText(ctx, text, x, y, maxWidth, lineHeight, align = 'left') {

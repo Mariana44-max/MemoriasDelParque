@@ -56,7 +56,7 @@ const assetLoader = new AssetLoader();
 // Carga de fondos y overlay
 assetLoader.loadImage('background_intro', 'assets/backgrounds/intro.png');
 assetLoader.loadImage('background_coffeFarm', 'assets/backgrounds/coffeFarm.png');
-assetLoader.loadImage('background_barn', 'assets/backgrounds/barn.png'); // ¡NUEVO FONDO DEL ESTABLO!
+assetLoader.loadImage('background_barn', 'assets/backgrounds/barn.png'); 
 assetLoader.loadImage('overlay_intro', 'assets/extra-elements/intro.png');
 
 // Sprites del JUGADOR
@@ -74,3 +74,5 @@ assetLoader.loadImage('grandpa_walk_sheet', 'assets/sprites/grandpa/walk1.png');
 
 // Elementos de juego
 assetLoader.loadImage('game_elements_sheet', 'assets/extra-elements/game_elements.png'); // Nivel 1
+assetLoader.loadImage('barn_elements_sheet', 'assets/extra-elements/barn_elements.png'); // Nivel 2
+assetLoader.loadImage('horse_head_sheet', 'assets/extra-elements/horse.png'); // CABALLO Nivel 2

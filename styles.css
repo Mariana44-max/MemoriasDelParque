@@ -105,6 +105,7 @@ nav button:hover {
     text-shadow: 0 2px 8px rgba(0,0,0,0.18);
     border-bottom: 2px solid #b48245;
     padding-bottom: 0.5rem;
+    text-align: center;
 }
 
 .section p, .section ul, .section li {
