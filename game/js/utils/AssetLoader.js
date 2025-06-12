@@ -74,5 +74,3 @@ assetLoader.loadImage('grandpa_walk_sheet', 'assets/sprites/grandpa/walk1.png');
 
 // Elementos de juego
 assetLoader.loadImage('game_elements_sheet', 'assets/extra-elements/game_elements.png'); // Nivel 1
-assetLoader.loadImage('horse', 'assets/extra-elements/horse.png'); // ¡NUEVO! Caballo para Nivel 2
-assetLoader.loadImage('barn_elements', 'assets/extra-elements/barn_elements.png'); // ¡NUEVO! Elementos para Nivel 2
