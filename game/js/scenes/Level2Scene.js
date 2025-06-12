@@ -78,6 +78,7 @@ class Level2Scene {
         this.appleFedToHorse = false;
         this.carriageClean = false;
         this.oilApplied = false;
+        this.quizCorrectAnswers = 0;
 
         // Inicializar objetos interactivos para el nivel 2
         // Ajusta las coordenadas (x,y) de estos objetos según tu background del establo.
@@ -95,18 +96,18 @@ class Level2Scene {
         this.quizQuestions = [
             {
                 question: "ABUELA: ¿Como se llama el elemento con el que guiamos al caballo?",
-                options: ["A) Rienda", "B) Montura"],
+                options: ["Rienda", "Montura"],
                 correctAnswerIndex: 0 
             },
             {
                 question: "ABUELO: ¿Que comida no le puedo dar a un caballo?",
-                options: ["A) Para que brille", "B) Carne"],
+                options: ["Azucar", "Carne"],
                 correctAnswerIndex: 1 
             },
             {
                 question: "ABUELA: ¿Qué se le echa a las ruedas de una carroza para que giren suavemente?",
-                options: ["A) Grasa", "B) Aceite"],
-                correctAnswerIndex: 1 
+                options: ["Grasa", "Aceite"],
+                correctAnswerIndex: 1
             }
         ];
         this.currentQuestionIndex = 0;
@@ -130,85 +131,89 @@ class Level2Scene {
         const mouseX = event.offsetX;
         const mouseY = event.offsetY;
 
-        if (this.gameState === 'game_over_screen') {
-            this.game.changeScene('level2'); // Reiniciar Level2Scene si hay game over
-            return;
-        }
-
-        // Avance de diálogo general (siempre que no esté en quiz o game over)
-        if (this.dialogueStep < this.dialogue.length && this.gameState !== 'quiz_time') {
-            this.advanceDialogue();
-            return; // Importante para que no se procesen clics de objetos mientras el diálogo avanza
-        }
-
-        // Lógica de interacción según el estado del juego
-        if (this.gameState === 'task_feed_horse_apple') {
-            if (this.apple && this.apple.isClicked(mouseX, mouseY)) {
-                this.apple.x = -100; // Mueve la manzana fuera de la vista
-                this.setDialogue("JUGADOR: ¡Aquí tienes, amiguito! Parece que le gusta.");
-                this.appleFedToHorse = true;
-                // Opcional: una animación corta del caballo comiendo o parpadeando extra.
-            } else {
-                this.setDialogue("JUGADOR: Debo darle la manzana al caballo. Haz clic en la manzana.");
+        // Lógica para avanzar el diálogo (si no es quiz_time o es la fase de pregunta del quiz)
+        // O si es quiz_time y el diálogo de feedback (correcto/incorrecto) está visible.
+        if (this.dialogueStep < this.dialogue.length) {
+            // Si estamos en quiz_time y el diálogo actual es el de la pregunta o el feedback de respuesta
+            if (this.gameState === 'quiz_time') {
+                this.advanceDialogue(); // Avanza el texto del diálogo
+                // Si el diálogo ha terminado Y no estamos en game_over_screen, entonces mostramos las opciones del quiz
+                // Ocultamos las opciones al seleccionar una, y las volvemos a mostrar si el diálogo de feedback ha terminado
+                if (this.dialogueStep >= this.dialogue.length && this.gameState !== 'game_over_screen') {
+                    // Si el diálogo de feedback ha terminado y estamos listos para la siguiente pregunta/intento
+                    if (this.currentQuestionIndex < this.quizQuestions.length) { // Si aún hay preguntas pendientes
+                        this.showQuiz = true; // Muestra las opciones para la siguiente pregunta/reintento
+                    }
+                }
+                return; // Consumir el clic
             }
-        } else if (this.gameState === 'task_clean_carriage') {
-            if (this.carriage && this.carriage.isClicked(mouseX, mouseY) && !this.carriageClean) {
-                this.carriage.setAnimation('carriage_clean'); // Cambia al sprite de carroza limpia
-                this.carriageClean = true;
-                this.setDialogue("JUGADOR: ¡La carroza está limpia! Brillando como nueva.");
-            } else if (this.carriageClean) {
-                this.setDialogue("JUGADOR: La carroza ya está limpia.");
-            } else {
-                this.setDialogue("JUGADOR: Debo hacer clic en la carroza sucia para limpiarla.");
-            }
-        } else if (this.gameState === 'task_oil_wheels') {
-            if (this.oilCan && this.oilCan.isClicked(mouseX, mouseY) && !this.oilApplied) {
-                this.oilCan.x = -100; // Mueve el tarro de aceite fuera de la vista
-                this.oilApplied = true;
-                this.setDialogue("JUGADOR: ¡Ruedas lubricadas! Ahora la carroza deslizará suave.");
-                // Opcional: una pequeña animación o sonido de lubricación.
-            } else if (this.oilApplied) {
-                this.setDialogue("JUGADOR: El aceite ya fue aplicado.");
-            } else {
-                this.setDialogue("JUGADOR: Debo usar el tarro de aceite para las ruedas.");
-            }
-        } else if (this.gameState === 'quiz_time') {
-            this.handleQuizClick(mouseX, mouseY); // Llama al método del quiz
-        } else if (this.gameState === 'level_complete') {
-            if (this.goldenHorseshoe && this.goldenHorseshoe.isClicked(mouseX, mouseY)) {
-                this.goldenHorseshoe = null; // "Recoger" la herradura
-                this.gameState = 'final_dialogue'; // Iniciar el diálogo final
-                this.setDialogue([
-                    "ABUELA: ¡Esta herradura dorada era un símbolo de buena suerte en nuestra familia!",
-                    "ABUELO: ¡Gracias a ti, hemos recuperado otro valioso recuerdo de este lugar!"
-                ]);
-                this.player.stopMoving();
-                this.oldCouple.stopMoving();
-            } else {
-                this.setDialogue("JUGADOR: Debo hacer clic en la herradura dorada para continuar.");
+            // Si no es quiz_time (es un diálogo normal de tarea o entrada/salida)
+            else if (this.gameState !== 'game_over_screen' && this.gameState !== 'level_complete' && this.gameState !== 'final_dialogue') {
+                this.advanceDialogue();
+                return; // Consumir el clic
             }
         }
 
-        // Lógica para avanzar el diálogo
-        if (this.dialogueStep < this.dialogue.length && this.gameState !== 'quiz_time') {
-            this.advanceDialogue();
-        } 
-        // else if (this.gameState === 'collect_items_barn') {
-        //     // Lógica de interacción para los elementos del establo
-        // }
+        // Lógica de interacción con objetos y quiz (solo si el diálogo no está activo)
+        if (this.dialogueStep >= this.dialogue.length) { // Asegura que el diálogo actual haya terminado
+            if (this.gameState === 'task_feed_horse_apple') {
+                if (this.apple && this.apple.isClicked(mouseX, mouseY) && !this.appleFedToHorse) {
+                    this.appleFedToHorse = true;
+                    this.setDialogue("JUGADOR: Le di la manzana al caballo. ¡Parece feliz!");
+                    this.apple = null; // "Recoger" la manzana
+                }
+            } else if (this.gameState === 'task_clean_carriage') {
+                if (this.carriage && this.carriage.isClicked(mouseX, mouseY) && !this.carriageClean) {
+                    this.carriageClean = true;
+                    this.setDialogue("JUGADOR: ¡La carroza está limpia!");
+                    this.carriage.setAnimation('carriage_clean'); // Cambia el sprite de la carroza a limpia
+                }
+            } else if (this.gameState === 'task_oil_wheels') {
+                if (this.oilCan && this.oilCan.isClicked(mouseX, mouseY) && !this.oilApplied) {
+                    this.oilApplied = true;
+                    this.setDialogue("JUGADOR: Las ruedas están aceitadas. ¡Listo!");
+                    this.oilCan = null; // "Recoger" el tarro de aceite
+                }
+            } else if (this.gameState === 'quiz_time') {
+                // Solo llama a handleQuizClick si las opciones están visibles
+                if (this.showQuiz) {
+                    this.handleQuizClick(mouseX, mouseY);
+                }
+            } else if (this.gameState === 'level_complete') {
+                if (this.goldenHorseshoe && this.goldenHorseshoe.isClicked(mouseX, mouseY)) {
+                    this.goldenHorseshoe = null; // "Recoger" la herradura
+                    this.gameState = 'final_dialogue'; // Iniciar el diálogo final
+                    this.setDialogue([
+                        "ABUELA: ¡Esta herradura dorada era un símbolo de buena suerte en nuestra familia!",
+                        "ABUELO: ¡Gracias a ti, hemos recuperado otro valioso recuerdo de este lugar!"
+                    ]);
+                    this.player.stopMoving();
+                    this.oldCouple.stopMoving();
+                } else {
+                    this.setDialogue("JUGADOR: Debo hacer clic en la herradura dorada para continuar.");
+                }
+            } else if (this.gameState === 'final_dialogue' && this.dialogueStep >= this.dialogue.length) {
+                // Después del diálogo final del nivel, pasar al siguiente nivel
+                this.game.changeScene('level3'); // O la escena que corresponda
+            } else if (this.gameState === 'game_over_screen') {
+                // En la pantalla de Game Over, cualquier clic reinicia el nivel
+                this.game.changeScene('level2'); // Reinicia el nivel completo
+                return;
+            }
+        }
     }
 
     handleQuizClick(mouseX, mouseY) {
-        if (!this.showQuiz) return;
+        if (!this.showQuiz) return; // Las opciones no están visibles, no procesar clic
 
         const currentQ = this.quizQuestions[this.currentQuestionIndex];
         if (!currentQ) return;
 
-        const optionX = 20; 
-        const optionWidth = this.game.canvas.width - 40; 
-        const optionHeight = 30; 
-        const option1Y = this.game.canvas.height - 80; 
-        const option2Y = this.game.canvas.height - 40; 
+        const optionX = 20;
+        const optionWidth = this.game.canvas.width - 40;
+        const optionHeight = 30;
+        const option1Y = this.game.canvas.height - 80;
+        const option2Y = this.game.canvas.height - 40;
 
         let selectedOptionIndex = -1;
 
@@ -221,35 +226,63 @@ class Level2Scene {
         }
 
         if (selectedOptionIndex !== -1) {
-            this.showQuiz = false; // Oculta el quiz inmediatamente después de la selección
+            this.showQuiz = false; // Oculta las opciones inmediatamente después de la selección
 
             if (selectedOptionIndex === currentQ.correctAnswerIndex) {
-                this.currentQuestionIndex++; // Avanza a la siguiente pregunta
-                if (this.currentQuestionIndex < this.quizQuestions.length) {
-                    this.setDialogue(this.quizQuestions[this.currentQuestionIndex].question); // Muestra la siguiente pregunta
-                } else {
-                    // Todas las preguntas respondidas correctamente
-                    this.gameState = 'level_complete';
-                    this.setDialogue("ABUELOS: ¡Lo lograste! ¡Otro recuerdo desbloqueado! ¡Busca la herradura dorada!");
-                    
-                    // Posicionar la herradura dorada (amuletPiece2) en el centro
-                    const horseshoeScale = 2; // Para que sea visible
-                    const horseshoeWidth = 32 * horseshoeScale; 
-                    const horseshoeHeight = 32 * horseshoeScale;
-                    this.goldenHorseshoe = new InteractiveObject(
-                        (this.game.canvas.width / 2) - (horseshoelWidth / 2),
-                        (this.game.canvas.height / 2) - (horseshoeHeight / 2),
-                        this.barnElementsSheet, // Usamos la sheet de elementos del establo
-                        this.barnElementAnimations, 
-                        'golden_horseshoe', // Usamos la animación de la herradura dorada
-                        horseshoeScale
-                    );
-                }
+                this.quizCorrectAnswers++;
+                this.setDialogue("¡Correcto! Muy bien.");
+                this.advanceQuiz(); // Llama a advanceQuiz para la progresión
             } else {
-                // Respuesta incorrecta
-                this.gameState = 'game_over_screen';
-                this.setDialogue("ABUELOS: No has recordado bien. ¡Inténtalo de nuevo!");
+                this.currentAttempts++;
+                if (this.currentAttempts >= this.quizAttemptsPerQuestion) {
+                    this.gameState = 'game_over_screen'; // Cambia a pantalla de Game Over
+                    this.showQuiz = false;
+                    // No muestres diálogo de feedback, pasa directo a Game Over
+                } else {
+                    this.setDialogue("ABUELOS: No has recordado bien. ¡Inténtalo de nuevo!");
+                    this.gameState = 'game_over_screen';
+                    this.showQuiz = false;
+                }
             }
+        }
+    }
+
+    advanceQuiz() {
+        // Antes de avanzar a la siguiente pregunta, asegúrate de que el diálogo de feedback haya terminado.
+        // O bien, puedes simplemente avanzar a la siguiente pregunta, y el handleClick se encargará de mostrar las opciones.
+
+        this.currentQuestionIndex++; // Avanza a la siguiente pregunta
+
+        if (this.currentQuestionIndex < this.quizQuestions.length) {
+            // Todavía quedan preguntas, cargar la siguiente
+            this.setDialogue(this.quizQuestions[this.currentQuestionIndex].question);
+            this.showQuiz = false; // Oculta las opciones hasta que el diálogo de la pregunta termine
+            this.dialogueStep = 0; // Reinicia el paso del diálogo para la nueva pregunta
+            this.currentAttempts = 0; // Reinicia los intentos para la nueva pregunta
+        } else {
+            // Se han respondido todas las preguntas
+            if (this.quizCorrectAnswers === this.quizQuestions.length) {
+                this.setDialogue("ABUELOS: ¡Lo lograste! ¡Otro recuerdo desbloqueado! ¡Busca la herradura dorada!");
+                this.gameState = 'level_complete';
+                // Crear y posicionar la herradura dorada GRANDE y CENTRADA
+                const horseshoeScale = 4; // Más grande
+                const horseshoeWidth = 32 * horseshoeScale;
+                const horseshoeHeight = 32 * horseshoeScale;
+                this.goldenHorseshoe = new InteractiveObject(
+                    (this.game.canvas.width / 2) - (horseshoeWidth / 2),
+                    (this.game.canvas.height / 2) - (horseshoeHeight / 2),
+                    this.barnElementsSheet, // Usa la sheet correcta
+                    this.barnElementAnimations,
+                    'golden_horseshoe',
+                    horseshoeScale
+                );
+            } else {
+                // Si no se respondieron todas correctamente
+                this.setDialogue("ABUELOS: No has recordado bien. ¡Inténtalo de nuevo!");
+                this.gameState = 'game_over_screen';
+                this.showQuiz = false;
+            }
+            this.showQuiz = false; // Asegura que las opciones del quiz no se dibujen más
         }
     }
 
@@ -326,8 +359,7 @@ class Level2Scene {
                 this.quizAttempted = true; // Marca que el quiz ha comenzado
             }
             // La transición de 'quiz_time' a 'level_complete' se manejará en `handleQuizClick`.
-        } else if (this.gameState === 'level_complete' && this.dialogueStep >= this.dialogue.length) {
-            // Lógica para que los personajes salgan y la transición al siguiente nivel
+        } else if (this.gameState === 'final_dialogue' && this.dialogueStep >= this.dialogue.length) {
             this.player.startWalking('right');
             this.oldCouple.startWalking('right');
 
@@ -431,7 +463,16 @@ class Level2Scene {
                 this.resetDialogueTimeout(); 
             } else {
                 clearTimeout(this.dialogueTimeout); 
-                // Aquí podrías añadir lógica si el diálogo finaliza y el estado debe cambiar
+                // --- SOLUCIÓN CLAVE ---
+                // Si estamos en quiz_time y hay más preguntas, mostrar el quiz
+                if (this.gameState === 'quiz_time' && this.currentQuestionIndex < this.quizQuestions.length) {
+                    this.showQuiz = true;
+                }
+                // Si el diálogo final ha terminado, iniciar la salida de los personajes
+                if (this.gameState === 'final_dialogue' && this.dialogueStep >= this.dialogue.length) {
+                    this.player.startWalking('right');
+                    this.oldCouple.startWalking('right');
+                }
             }
         }
     }

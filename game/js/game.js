@@ -16,7 +16,7 @@ class Game {
             if (assetLoader.isReady()) {
                 console.log("Todos los assets cargados. Inicializando escenas.");
                 this.setupScenes();
-                this.changeScene('level2'); // Inicia con la escena de introducción
+                this.changeScene('intro'); // Inicia con la escena de introducción
                 this.gameLoop(0); // Inicia el bucle de juego
             } else {
                 console.log(`Cargando assets... ${assetLoader.loadedAssets}/${assetLoader.totalAssets}`);
@@ -28,9 +28,14 @@ class Game {
 
     // Configura todas las escenas del juego
     setupScenes() {
-        this.scenes.intro = new IntroScene(this);
-        this.scenes.level1 = new Level1Scene(this);
-        this.scenes.level2 = new Level2Scene(this);
+        // Primero crea los personajes
+        this.player = new Player(/* parámetros si aplica */);
+        this.oldCouple = new OldCouple(/* parámetros si aplica */);
+
+        // Luego crea las escenas, pasándoles los personajes
+        this.scenes['intro'] = new IntroScene(this, this.player, this.oldCouple);
+        this.scenes['level1'] = new Level1Scene(this, this.player, this.oldCouple);
+        this.scenes['level2'] = new Level2Scene(this, this.player, this.oldCouple);
     }
 
     // Cambia la escena actual

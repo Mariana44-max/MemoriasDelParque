@@ -8,6 +8,24 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Quicksand:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
+    <style>
+        .game-iframe-container {
+            width: 100%;
+            max-width: 1280px; /* O el ancho que pusiste en el canvas */
+            margin: 0 auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .game-iframe {
+            width: 100%;
+            height: 80vh; /* O ajusta según tu preferencia */
+            border: none;
+            background: #000;
+            display: block;
+        }
+    </style>
 </head>
 <body>
     <div class="video-bg-container">
@@ -111,21 +129,6 @@
             <button class="level" onclick="toggleLevel(this)" type="button">
                 <h3><img src="images/icons/horse.png" alt="Caballo" class="icon"> Nivel 3 – El establo y los caballos</h3>
                 <p class="level-content">En el establo, los caballos están descuidados. El jugador debe alimentarlos y reparar una carroza. Al final encuentra una herradura dorada, que entrega a los abuelos. Esto despierta en el abuelo el recuerdo del valor de los caballos, y se lo comparte al jugador.</p>
-            </button>
-
-            <button class="level" onclick="toggleLevel(this)" type="button">
-                <h3><img src="images/icons/train.png" alt="Tren" class="icon"> Nivel 4 – La estación del tren</h3>
-                <p class="level-content">Los abuelos acompañan al jugador a la estación del tren. El tren está dañado y desconectado. Los abuelos recuerdan cómo viajaban en tren entre municipios, lo que motiva al jugador a repararlo. Cuando logra hacerlo funcionar, todos suben al tren, cerrando este nivel.</p>
-            </button>
-
-            <button class="level" onclick="toggleLevel(this)" type="button">
-                <h3><img src="images/icons/dance.png" alt="Baile" class="icon"> Nivel 5 – El teatro y el show del cafe</h3>
-                <p class="level-content">El jugador llega al teatro y nota que los bailarines del show del café no están. Debe encontrarlos y convencerlos de volver a actuar. Cuando aceptan, los abuelos recuerdan las fiestas tradicionales con carranga, bambuco, pasillo y otros ritmos folclóricos.</p>
-            </button>
-
-            <button class="level" onclick="toggleLevel(this)" type="button">
-                <h3><img src="images/icons/museum.png" alt="Museo" class="icon"> Nivel 6 – El museo del cafe</h3>
-                <p class="level-content">Uno de los bailarines informa que el museo está cerrado porque un hombre no quiere entregar la llave. El jugador debe animarlo usando pistas: darle un capuchino con Baileys y un pase para un paseo a caballo. Si lo hace bien, obtiene la llave, abre el museo y los abuelos finalmente recuperan todos sus recuerdos. Así concluye el juego.</p>
             </button>
         </section>
         <section id="players-table" class="section hide">
