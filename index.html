@@ -4,9 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Memorias del Parque</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Quicksand:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <div class="video-bg-container">
+        <video autoplay loop muted playsinline class="video-bg">
+            <source src="images/background.mp4" type="video/mp4">
+            Tu navegador no soporta video de fondo.
+        </video>
+        <div class="video-overlay"></div>
+    </div>
     <header>
         <img src="images/logo.png" alt="Logo Memorias del Parque" class="logo">
         <h1>Memorias del Parque</h1>
@@ -15,27 +25,69 @@
             <button onclick="showSection('about-us')" class="button"  >¿Quiénes somos?</button>
             <button onclick="showSection('info-game')" class="button">Información del juego</button>
             <button onclick="showSection('levels')" class="button">Niveles</button>
-            <button onclick="showSection('players-table')" class="button">Tabla de Clasificaciones</button>
+            <button onclick="showSection('game')" class="button">Jugar</button>
         </nav>
     </header>
-
+    <main>
         <section id="start" class="section">
             <h2>Bienvenido a Memorias del Parque</h2>
             <p>Un viaje cultural inspirado en el Parque del Café, donde recuperarás recuerdos perdidos mientras descubres nuestras raíces.</p>
+            <div class="start-map-container">
+                <img src="images/icons/mapa.jpg" alt="Mapa Parque del Café" class="start-map-pixel">
+            </div>
         </section>
 
         <section id="about-us" class="section hide">
             <h2>¿Quiénes somos?</h2>
-            <p>Somos un equipo de estudiantes de primer semestre de Ingeniería de Software e Industrial, apasionados por la cultura, la tecnología y la creatividad. Este proyecto nació como parte de nuestra formación académica, pero también como una forma de rendir homenaje al Parque del Café y a las tradiciones del eje cafetero.</p>
-            <ul>
-                <li>🎓 Mariana Gonzalez – Ingenieria de Software</li>
-                <li>🎓 Esteban Bonilla  – Ingenieria de Software</li>
-                <li>🎓 Valentina Ruiz   – Ingenieria de Software</li>
-                <li>🎓 Santiago Leyton  – Ingenieria de Software</li>
-                <li>🎓 Yesika Arias     – Ingenieria Industrial </li>
-                <li>🎓 Sofia Espinosa   – Ingenieria Industrial </li>
-            </ul>
-            <p>“Memorias del Parque” es más que un videojuego: es un recorrido por nuestras raíces, nuestras historias y lo que nos hace únicos como colombianos.</p>
+            <div class="team-grid">
+                <div class="team-row">
+                    <div class="team-card">
+                        <img src="images/icons/mariana.jpg" alt="Mariana Gonzalez" class="profile-pixel">
+                        <div class="team-info">
+                            <span class="team-name">Mariana Gonzalez</span>
+                            <span class="team-career">Ingeniería de Software</span>
+                        </div>
+                    </div>
+                    <div class="team-card">
+                        <img src="images/icons/esteban.jpg" alt="Esteban Bonilla" class="profile-pixel">
+                        <div class="team-info">
+                            <span class="team-name">Esteban Bonilla</span>
+                            <span class="team-career">Ingeniería de Software</span>
+                        </div>
+                    </div>
+                    <div class="team-card">
+                        <img src="images/icons/valentina.jpg" alt="Valentina Ruiz" class="profile-pixel">
+                        <div class="team-info">
+                            <span class="team-name">Valentina Ruiz</span>
+                            <span class="team-career">Ingeniería de Software</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="team-row">
+                    <div class="team-card">
+                        <img src="images/icons/santiago.jpg" alt="Santiago Leyton" class="profile-pixel">
+                        <div class="team-info">
+                            <span class="team-name">Santiago Leyton</span>
+                            <span class="team-career">Ingeniería de Software</span>
+                        </div>
+                    </div>
+                    <div class="team-card">
+                        <img src="images/icons/yesika.jpg" alt="Yesika Arias" class="profile-pixel">
+                        <div class="team-info">
+                            <span class="team-name">Yesika Arias</span>
+                            <span class="team-career">Ingeniería Industrial</span>
+                        </div>
+                    </div>
+                    <div class="team-card">
+                        <img src="images/icons/sofia.jpg" alt="Sofia Espinosa" class="profile-pixel">
+                        <div class="team-info">
+                            <span class="team-name">Sofia Espinosa</span>
+                            <span class="team-career">Ingeniería Industrial</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <p class="about-desc">“Memorias del Parque” es más que un videojuego: es un recorrido por nuestras raíces, nuestras historias y lo que nos hace únicos como colombianos.</p>
         </section>
 
         <section id="info-game" class="section hide">
@@ -46,36 +98,35 @@
         <section id="levels" class="section hide">
             <h2>Niveles del Juego</h2>
 
-            <div class="level" onclick="toggleLevel(this)">
+            <button class="level" onclick="toggleLevel(this)" type="button">
                 <h3><img src="images/icons/square.png" alt="Plaza" class="icon"> Nivel 1 – El comienzo en la plaza</h3>
                 <p class="level-content">El jugador llega al Parque del Café y encuentra un entorno triste y apagado. Al llegar a la plaza, se encuentra con una pareja de abuelos desorientados.</p>
-            </div>
+            </button>
 
-            <div class="level" onclick="toggleLevel(this)">
+            <button class="level" onclick="toggleLevel(this)" type="button">
                 <h3><img src="images/icons/coffe.png" alt="Cultivo" class="icon"> Nivel 2 – Zona de cultivos de café</h3>
                 <p class="level-content">El jugador se dirige a la zona de cultivos donde aprende sobre el café y encuentra un libro de recetas. Deberá arreglar los cultivos superando pruebas como regar adecuadamente, aplicar fertilizante correcto y quitar maleza. Luego entrega el libro a los abuelos, y la abuela recuerda la importancia histórica del café para Colombia y el parque.</p>
-            </div>
+            </button>
 
-            <div class="level" onclick="toggleLevel(this)">
+            <button class="level" onclick="toggleLevel(this)" type="button">
                 <h3><img src="images/icons/horse.png" alt="Caballo" class="icon"> Nivel 3 – El establo y los caballos</h3>
                 <p class="level-content">En el establo, los caballos están descuidados. El jugador debe alimentarlos y reparar una carroza. Al final encuentra una herradura dorada, que entrega a los abuelos. Esto despierta en el abuelo el recuerdo del valor de los caballos, y se lo comparte al jugador.</p>
-            </div>
+            </button>
 
-            <div class="level" onclick="toggleLevel(this)">
+            <button class="level" onclick="toggleLevel(this)" type="button">
                 <h3><img src="images/icons/train.png" alt="Tren" class="icon"> Nivel 4 – La estación del tren</h3>
                 <p class="level-content">Los abuelos acompañan al jugador a la estación del tren. El tren está dañado y desconectado. Los abuelos recuerdan cómo viajaban en tren entre municipios, lo que motiva al jugador a repararlo. Cuando logra hacerlo funcionar, todos suben al tren, cerrando este nivel.</p>
-            </div>
+            </button>
 
-            <div class="level" onclick="toggleLevel(this)">
+            <button class="level" onclick="toggleLevel(this)" type="button">
                 <h3><img src="images/icons/dance.png" alt="Baile" class="icon"> Nivel 5 – El teatro y el show del cafe</h3>
                 <p class="level-content">El jugador llega al teatro y nota que los bailarines del show del café no están. Debe encontrarlos y convencerlos de volver a actuar. Cuando aceptan, los abuelos recuerdan las fiestas tradicionales con carranga, bambuco, pasillo y otros ritmos folclóricos.</p>
-            </div>
+            </button>
 
-            <div class="level" onclick="toggleLevel(this)">
+            <button class="level" onclick="toggleLevel(this)" type="button">
                 <h3><img src="images/icons/museum.png" alt="Museo" class="icon"> Nivel 6 – El museo del cafe</h3>
                 <p class="level-content">Uno de los bailarines informa que el museo está cerrado porque un hombre no quiere entregar la llave. El jugador debe animarlo usando pistas: darle un capuchino con Baileys y un pase para un paseo a caballo. Si lo hace bien, obtiene la llave, abre el museo y los abuelos finalmente recuperan todos sus recuerdos. Así concluye el juego.</p>
-            </div>
-            <p><strong>Al final del juego, se guarda el tiempo que el jugador tardó en completar la aventura para mostrar una tabla de clasificaciones.</strong></p>
+            </button>
         </section>
         <section id="players-table" class="section hide">
     <h2>Tabla de Clasificaciones</h2>
@@ -99,8 +150,19 @@
         <button onclick="addPlayer()">Agregar</button>
     </div>
 </section>
-
-
+        <section id="game" class="section hide">
+            <h2>¡Juega Memorias del Parque!</h2>
+            <div class="game-iframe-container">
+                <iframe src="game/game.html" class="game-iframe" title="Juego Memorias del Parque" allowfullscreen></iframe>
+            </div>
+        </section>
+    </main>
+    <footer>
+        <p>© 2025 Memorias del Parque. Todos los derechos reservados por los autores de este proyecto.</p>
+    </footer>
+    <button id="scrollTopBtn" title="Subir" aria-label="Subir al inicio">
+        ↑
+    </button>
     <script src="script.js"></script>
 </body>
 </html>
